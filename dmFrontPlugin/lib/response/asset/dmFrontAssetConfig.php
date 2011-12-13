@@ -46,6 +46,7 @@ class dmFrontAssetConfig extends dmAssetConfig
         sfConfig::get('sf_web_debug') ? 'lib.symfony_debug' : null,
         'lib.metadata',
         'lib.cookie',
+        'lib.maxzindex',
         'lib.ui-core',
         'lib.ui-widget',
         'lib.ui-mouse',
@@ -76,9 +77,10 @@ class dmFrontAssetConfig extends dmAssetConfig
         'front.area',
         'front.zone',
         'front.widget',
-        'front.widgetForms'
+        'front.widgetForms'          
       );
     }
+    
     
     return array(
       'lib.jquery',

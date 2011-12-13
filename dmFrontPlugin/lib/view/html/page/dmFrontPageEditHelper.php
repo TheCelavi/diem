@@ -20,17 +20,86 @@ class dmFrontPageEditHelper extends dmFrontPageBaseHelper
     $this->moduleManager = $this->serviceContainer->getService('module_manager');
   }
 
+  public function renderArea($name, $options = array())
+  {
+    $options = dmString::toArray($options);
+
+    //Set id of page we need
+    $this->global_area_id = dmArray::get($options, 'global_area', null);
+
+    unset($options['global_area']);
+
+    $tagName = $this->getAreaTypeTagName($name);
+
+    $area = $this->getArea($name);
+
+    list($prefix, $type) = explode('.', $name);
+    
+    $options['class'] = array_merge(dmArray::get($options, 'class', array()), array(
+'dm_area',
+'dm_'.$prefix.'_'.$type,
+'dm_area_'.$area['id'],
+        
+       
+// TODO - TheCelavi add support for attaching behaviors to the areas!!!        
+//($this->user->can('behavior_edit') || $this->user->can('behavior_add') || $this->user->can('behavior_delete')) ? 'dm_behaviors_attachable' : ''
+    ));
+    
+    
+    $options['id'] = dmArray::get($options, 'id', 'dm_area_'.$area['id']);
+
+    $html = '';
+
+    /*
+     * Add a content id for accessibility purpose ( access link )
+     */
+    if ('content' === $type)
+    {
+            $html .= '<div id="dm_content">';
+    }
+
+    $html .= $this->helper->open($tagName, $options);
+
+    $html .= '<div class="dm_zones clearfix">';
+
+    $html .= $this->renderAreaInner($area);
+
+    $html .= '</div>';
+
+    $html .= sprintf('</%s>', $tagName);
+
+    /*
+     * Add a content id for accessibility purpose ( access links )
+     */
+    if ('content' === $type)
+    {
+            $html .= '</div>';
+    }
+
+    return $html;
+  }
+  
   public function renderZone(array $zone)
   {
     $style = (!$zone['width'] || $zone['width'] === '100%') ? '' : ' style="width: '.$zone['width'].';"';
     
-    $html = '<div id="dm_zone_'.$zone['id'].'" class="'.dmArray::toHtmlCssClasses(array('dm_zone', $zone['css_class'])).'"'.$style.'>';
+    $html = '<div id="dm_zone_'.$zone['id'].'" class="'.dmArray::toHtmlCssClasses(array(
+        'dm_zone', 
+        'dm_zone_'.$zone['id'],
+        $zone['css_class'],
+        ($this->user->can('behavior_edit') || $this->user->can('behavior_add') || $this->user->can('behavior_delete')) ? 'dm_behaviors_attachable' : ''
+        )).'"'.$style.'>';
 
     if ($this->user->can('zone_edit'))
     {
       $html .= '<a class="dm dm_zone_edit" title="'.$this->i18n->__('Edit this zone').'"></a>';
     }
 
+    if ($this->user->can('behavior_edit') || $this->user->can('behavior_delete')) 
+    {
+      $html .= '<a class="dm dm_edit_behaviors_icon s16_gear s16" title="'.$this->i18n->__('Edit behaviors').'"></a>';
+    }
+    
     $html .= '<div class="dm_widgets">';
 
     $html .= $this->renderZoneInner($zone);
@@ -62,7 +131,7 @@ class dmFrontPageEditHelper extends dmFrontPageBaseHelper
     /*
      * Open widget wrap with wrapped user's classes
      */
-    $html = '<div class="'.$widgetWrapClass.'" id="dm_widget_'.$widget['id'].'">';
+    $html = '<div class="'.$widgetWrapClass.' dm_widget_'.$widget['id'].(($this->user->can('behavior_edit') || $this->user->can('behavior_add') || $this->user->can('behavior_delete')) ? ' dm_behaviors_attachable' : '').'" id="dm_widget_'.$widget['id'].'">';
 
     if (!$is_programmatically)
     {
@@ -86,6 +155,11 @@ class dmFrontPageEditHelper extends dmFrontPageBaseHelper
         $html .= '<a class="dm dm_widget_edit" title="'.htmlentities($title, ENT_COMPAT, 'UTF-8').'"></a>';
       }
 
+      if ($this->user->can('behavior_edit') || $this->user->can('behavior_delete')) 
+      {
+        $html .= '<a class="dm dm_edit_behaviors_icon s16_gear s16" title="'.$this->i18n->__('Edit behaviors').'"></a>';
+      }
+      
       /*
        * Add fast record edit button if required
        */
