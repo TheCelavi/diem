@@ -1,0 +1,29 @@
+## Empty behaviors file
+---
+dmBehaviors:
+  cycle:
+    section: Media Gallery
+    name: Cycle
+    #icon: /dmImageOverlayBehaviorPlugin/images/icon.png
+    form: dmCycleBehaviorForm
+    view: dmCycleBehaviorView
+  pero:
+    section: Media Gallery
+    name: Pero
+    #icon: /dmImageOverlayBehaviorPlugin/images/icon.png
+    form: dmCycleBehaviorForm
+    view: dmCycleBehaviorView
+  djura:
+    section: Media Gallery
+    name: Djura
+    #icon: /dmImageOverlayBehaviorPlugin/images/icon.png
+    form: dmCycleBehaviorForm
+    view: dmCycleBehaviorView
+    
+  mika:
+    section: Media Gallery
+    name: Mika
+    #icon: /dmImageOverlayBehaviorPlugin/images/icon.png
+    form: dmCycleBehaviorForm
+    view: dmCycleBehaviorView
+    

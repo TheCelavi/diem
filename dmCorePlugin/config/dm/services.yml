@@ -209,6 +209,8 @@ parameters:
   
   record_permission_association_manager.class:      dmRecordPermissionAssociationManager
   
+  behaviors_manager.class:    dmBehaviorsManager    # Responsible for managing behaviors
+  
 services:
 
   text_diff:
@@ -516,3 +518,8 @@ services:
     class:                                          %record_permission_association_manager.class%
     shared:                                         true
     arguments:                                     [ @context, @service_container, @user ]
+  
+  behaviors_manager:
+    class:                    %behaviors_manager.class%
+    shared:                   true
+    arguments:                [@context]
