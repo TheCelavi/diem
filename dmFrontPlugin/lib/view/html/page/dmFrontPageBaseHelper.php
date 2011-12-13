@@ -333,10 +333,13 @@ abstract class dmFrontPageBaseHelper extends dmConfigurable
 		return $html;
 	}
 
-	public function renderWidget(array $widget)
+	public function renderWidget(array $widget, $executeWidgetAction = false)
 	{
-		$this->executeWidgetAction($widget);
-		 
+		if ($executeWidgetAction)
+		{
+			$this->executeWidgetAction($widget);
+		}
+		
 		list($widgetWrapClass, $widgetInnerClass) = $this->getWidgetContainerClasses($widget);
 
 		/*
