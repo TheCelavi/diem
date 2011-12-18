@@ -210,6 +210,11 @@ parameters:
   record_permission_association_manager.class:      dmRecordPermissionAssociationManager
   
   behaviors_manager.class:    dmBehaviorsManager    # Responsible for managing behaviors
+  behaviors_manager.options:
+    page_attachable:  false
+    area_attachable:  false
+    zone_attachable:  true
+    widget_attachable:  true
   
 services:
 
@@ -522,4 +527,4 @@ services:
   behaviors_manager:
     class:                    %behaviors_manager.class%
     shared:                   true
-    arguments:                [@context]
+    arguments:                [@context, %behaviors_manager.options%]

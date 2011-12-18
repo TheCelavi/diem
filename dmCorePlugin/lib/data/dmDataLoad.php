@@ -502,9 +502,10 @@ class dmDataLoad
       'mail_template' => 'Configure mail templates',
       'error_log' => 'See error log',
       'interface_settings' => 'Manage interface settings like default image resize method',
-      'behavior_add' => 'Add behaviors',
-      'behavior_edit' => 'Edit behaviors',
-      'behavior_delete' => 'Delete behaviors'
+      'behavior_add' => 'Add behaviors to page elements',
+      'behavior_edit' => 'Edit settings of the behaviors',
+      'behavior_delete' => 'Delete attached behaviors',
+      'behavior_sort' => 'Sort the sequence of the behaviors'
     ); 
 
     $existingPermissions = dmDb::query('DmPermission p INDEXBY p.name')
@@ -589,7 +590,8 @@ class dmDataLoad
           'see_log',
           'behavior_add',
           'behavior_edit',
-          'behavior_delete'
+          'behavior_delete',
+          'behavior_sort'
         )
       ),
       "webmaster 1" => array(

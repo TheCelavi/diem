@@ -11,13 +11,11 @@ class dmFrontBehaviorsAddMenu extends dmMenu {
                 ->addChild('Behaviors')
                 ->setOption('root_add', true)
                 ->ulClass('ui-widget ui-widget-content level1')
-                ->liClass('ui-corner-bottom ui-state-default')
-                ->addBehaviors();
-                //->addClipboard()
-                //->addWidgets();
-                
-        // TODO Should this event be fired?        
-        $this->serviceContainer->getService('dispatcher')->notify(new sfEvent($this, 'dm.front.add_menu', array()));        
+                ->liClass('ui-corner-bottom ui-state-default')                
+                ->addClipboard()
+                ->addBehaviors();                
+                  
+        $this->serviceContainer->getService('dispatcher')->notify(new sfEvent($this, 'dm.front.behavior_menu', array()));        
         return $this;
     }
     
@@ -40,59 +38,32 @@ class dmFrontBehaviorsAddMenu extends dmMenu {
                 $this->removeChild($spaceMenu);
             }
         }
-//        $this
-//      ->addChild('Clipboard')->credentials('widget_add')->ulClass('clearfix level2')->liClass('dm_droppable_widgets')
-//      ->setOption('pero', 'perot');
+        return $this;
+    }
+    
+    public function addClipboard() {
+        $user = $this->serviceContainer->getService('user');
+        if (!$user->can('behavior_add')) return $this;
+        $data = $user->getAttribute('dm_behavior_clipboard', null, 'dm.front_user_behavior_clipboard');
+        if (!is_null($data)) {
+            if ($data['dm_behavior_clipboard_action'] == 'cut' && !$user->can('behavior_delete')) return $this; 
+            $behaviorsManager = $this->serviceContainer->getService('behaviors_manager');
+            try {
+                $behavior = DmBehaviorTable::getInstance()->findOneById($data['dm_behavior_id']);
+                $settings = $behaviorsManager->getBehaviorSettings($behavior->getDmBehaviorKey());
+            } catch (Exception $e) {
+                return $this;
+            }
+            $this->addChild('Clipboard')->ulClass('clearfix level2')->liClass('dm_droppable_behaviors')
+            ->addChild($behavior->getDmBehaviorKey() . 'clipboard')
+            ->setOption('clipboard_action', $data['dm_behavior_clipboard_action'])
+            ->setOption('clipboard_icon', $settings['icon'])
+            ->setOption('clipboard_id', $behavior->getId())
+            ->label($settings['name']);
+        }
         return $this;
     }
 
-
-//    public function addClipboard()
-//  {
-//    if($widget = $this->serviceContainer->getService('front_clipboard')->getWidget())
-//    {
-//      $this
-//      ->addChild('Clipboard')->credentials('widget_add')->ulClass('clearfix level2')->liClass('dm_droppable_widgets')
-//      ->addChild($this->serviceContainer->get('widget_type_manager')->getWidgetType($widget)->getName())
-//      ->setOption('clipboard_widget', $widget)
-//      ->setOption('clipboard_method', $this->serviceContainer->getService('front_clipboard')->getMethod());
-//    }
-//
-//    return $this;
-//  }
-//  
-//  public function addWidgets()
-//  {
-//    $moduleManager = $this->serviceContainer->getService('module_manager');
-//    
-//    foreach($this->serviceContainer->get('widget_type_manager')->getWidgetTypes() as $space => $widgetTypes)
-//    {
-//      $spaceName = ($module = $moduleManager->getModuleOrNull($space))
-//      ? $module->getName()
-//      : dmString::humanize(str_replace('dmWidget', '', $space));
-//      
-//      $spaceMenu = $this->addChild($space)
-//      ->label($this->getI18n()->__($spaceName))
-//      ->ulClass('clearfix level2')
-//      ->liClass('dm_droppable_widgets');
-//      
-//      foreach($widgetTypes as $key => $widgetType)
-//      {
-//        $spaceMenu
-//        ->addChild($widgetType->getName())
-//        ->label($this->getI18n()->__($widgetType->getName()))
-//        ->setOption('widget_type', $widgetType);
-//      }
-//
-//      if(!$spaceMenu->hasChildren())
-//      {
-//        $this->removeChild($spaceMenu);
-//      }
-//    }
-//    
-//    return $this;
-//  }
-//
   public function renderLabel()
   {
     if($this->getOption('behavior_key'))
@@ -103,14 +74,15 @@ class dmFrontBehaviorsAddMenu extends dmMenu {
         parent::renderLabel()
       );
     }
-//    elseif($widget = $this->getOption('clipboard_widget'))
-//    {
-//      return sprintf('<span class="widget_paste move dm_%s" id="dmwp_%d">%s</span>',
-//        $this->getOption('clipboard_method'),
-//        $widget->get('id'),
-//        dmString::strtolower(parent::renderLabel())
-//      );
-//    }
+    elseif($this->getOption('clipboard_action'))
+    {
+      return sprintf('<span class="behavior_add clipboard %s move" id="dmba_clipboard_behavior_id_%s"><img src="%s" width="16" height="16" />%s</span>',        
+        $this->getOption('clipboard_action'),
+        $this->getOption('clipboard_id'),
+        $this->getOption('clipboard_icon'),
+        dmString::strtolower(parent::renderLabel())
+      );
+    }
     elseif($this->getOption('root_add'))
     {
       return '<a class="tipable s24block s24_gear widget24" title="'.$this->__('Add behaviors').'"></a>';

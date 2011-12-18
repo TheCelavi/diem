@@ -316,10 +316,10 @@ DmBehavior:
     dm_behavior_enabled:                { type: boolean, notnull: true, default: true }
     
     # Behaviors can be attached to page, zone, widget or some content inside page, zone or widget 
-    dm_behavior_attached_to:            { type: enum, values: [page, area, zone, widget, content], notnull: true }
+    dm_behavior_attached_to:            { type: enum, values: [page, area, zone, widget], notnull: true }
         
     # so the selector should be "dm_container_id content_id", per example: dm_widget_5 some_dom_elem_10 - it will target the content inside the widget
-    dm_behavior_attached_to_selector:   { type: string(255), notnull: true }
+    dm_behavior_attached_to_selector:   { type: string(255), notnull: true, default: null }
 
     # This is where we store the settings for the behavior
     dm_behavior_value:                  { type: string(60000) }

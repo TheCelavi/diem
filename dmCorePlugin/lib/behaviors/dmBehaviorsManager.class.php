@@ -34,7 +34,23 @@ class dmBehaviorsManager extends dmConfigurable {
         
         $this->configure($options);
     }
+
+    public function isPageAttachable() {
+        return (bool) $this->getOption('page_attachable', false);
+    }
+
+    public function isAreaAttachable() {
+        return (bool) $this->getOption('area_attachable', false);
+    }
     
+    public function isZoneAttachable() {
+        return (bool) $this->getOption('zone_attachable', true);
+    }
+    
+    public function isWidgetAttachable() {
+        return (bool) $this->getOption('widget_attachable', true);
+    }
+
     /**
      * Checks if behavior exists
      * @param string $key
@@ -50,10 +66,10 @@ class dmBehaviorsManager extends dmConfigurable {
      * @param string $key The behavior key
      * @param string $attachedTo On which container is attached, page, area, zone or widget?
      * @param int $attachedToId The id of the container
-     * @param string $attachedToSelector If it is attached to the content, how to identify it?
+     * @param string $attachedToSelector If it is attached to the content
      * @return type 
-     */
-    public function createEmptyInstance($key, $attachedTo, $attachedToId, $attachedToSelector) {        
+     */   
+    public function createEmptyInstance($key, $attachedTo, $attachedToId, $attachedToSelector = null) {        
         $formClass = $this->getBehaviorFormClass($key);
         $behavior = new DmBehavior();
         $behavior->setDmBehaviorKey($key);
@@ -64,14 +80,15 @@ class dmBehaviorsManager extends dmConfigurable {
                 ->limit(1)
                 ->select('MAX(b.position) as position')
                 ->fetchOneArray();
-        return dmDb::create('DmBehavior', array(
+        $saveData = array(
             'position' => $position['position'] + 1, // Last in, first executes... :)
             'dm_behavior_key'=>$key,
-            'dm_behavior_attached_to'=> (is_null($attachedToSelector)) ? $attachedTo : 'content',
-            'dm_behavior_attached_to_selector'=> $attachedToSelector,
+            'dm_behavior_attached_to'=> $attachedTo,            
             'dm_'.$attachedTo.'_id'=> (int) $attachedToId,
-            'dm_behavior_value' => json_encode($form->getDefaults())
-        ))->saveGet();
+            'dm_behavior_value' => json_encode($form->getDefaults()));
+        if (!is_null($attachedToSelector)) $saveData['dm_behavior_attached_to_selector'] = $attachedToSelector;
+        
+        return dmDb::create('DmBehavior', $saveData)->saveGet();
     }
 
     /**
@@ -151,10 +168,10 @@ class dmBehaviorsManager extends dmConfigurable {
 
     public function getJavascripts() {
         if (!$this->adminMode && $cache = $this->getCache('javascripts')) return eval($cache);
-        $this->addJavascript('/dmCorePlugin/js/behaviors/dmBehaviorsManager.js');
+        $this->addJavascript('core.behaviorsManager');
         if ($this->adminMode) {
-            $this->addJavascript('/dmCorePlugin/js/behaviors/dmBehaviorsManagerAdmin.js');
-            $this->addJavascript('/dmCorePlugin/lib/json/jquery.json-2.3.min.js');
+            $this->addJavascript('core.behaviorsManagerAdmin');
+            $this->addJavascript('lib.json');
         }
         return $this->javascripts;
     }
@@ -167,7 +184,7 @@ class dmBehaviorsManager extends dmConfigurable {
     public function getStylesheets() {
         if (!$this->adminMode && $cache = $this->getCache('stylesheets')) return eval($cache);
         $user = $this->context->getServiceContainer()->getService('user');
-        if ($this->adminMode) $this->addStylesheet (array('/dmCorePlugin/css/behaviors.css'=>null));
+        if ($this->adminMode) $this->addStylesheet (array('core.behaviors'=>null));
         return $this->stylesheets;
     }
 
@@ -224,32 +241,46 @@ class dmBehaviorsManager extends dmConfigurable {
      */
     public function getDmBehavior($id) {
         try {
-            return dmDb::query('DmBehavior b')->withI18n()->where('b.id = ?', array($id))->fetchOne();
+            $behavior = dmDb::query('DmBehavior b')->withI18n()->where('b.id = ?', array($id))->fetchOne();
         } catch (Exception $e) {
             throw new dmException(sprintf('Could not fetch behavior with id = ""', $id));
         }
-    }
-    
-    public function getBehaviorsForSort($context, $id) {        
-        switch ($context) {
-            case 'page': {
-                    return $this->getPageBehaviors($id);
-            } break;
-            case 'area': {
-                    return $this->getAreaBehaviors($id);
-            } break;
-            case 'zone': {
-                    return $this->getZoneBehaviors($id);
-            } break;
-            case 'widget': {
-                    return $this->getWidgetBehaviors($id);
-            } break;
-            default: {
-                return array();
-            }
-        }
+        if (!$behavior) throw new dmException(sprintf('Could not fetch behavior with id = ""', $id));
+        return $behavior;
         
     }
+    
+    /**
+     * Gets the ascending ordered behaviors to be sorted in some context
+     * @param string $context Attached to? (page | area | zone | widget)
+     * @param int $id The id of the attachable page component
+     * @return array 
+     */
+    public function getBehaviorsForSort($context, $id) {    // TODO TheCelavi - how to sort in content behaviors? How to only fetch them?
+        $behaviors = array();
+        switch ($context) {
+            case 'page': {
+                    $behaviors = $this->getPageBehaviors($id);
+            } break;
+            case 'area': {
+                    $behaviors = $this->getAreaBehaviors($id);
+            } break;
+            case 'zone': {
+                    $behaviors = $this->getZoneBehaviors($id);
+            } break;
+            case 'widget': {
+                    $behaviors = $this->getWidgetBehaviors($id);
+            } break;
+        }
+        if (count($behaviors) == 0) throw new dmException (sprintf('There are no behaviors to be sorted in this %s', $context));
+        usort($behaviors, array('dmBehaviorsManager', 'sortBehaviors'));
+        return $behaviors;
+    }
+
+    static function sortBehaviors($a, $b) {
+        return ($a['position'] - $b['position'] > 0);
+    }
+
 
     private function getPageBehaviors($page) {
         if (!$page instanceof DmPage) $page = dmDb::query('DmPage p')->where('p.id = ?', array($page))->fetchOne();               
@@ -270,9 +301,6 @@ class dmBehaviorsManager extends dmConfigurable {
         return $behaviors;
     }
     private function getZoneBehaviors($zone) {
-        
-        //var_dump($zone->getId());
-        
         if (!$zone instanceof DmZone) $zone = dmDb::query('DmZone z')->where('z.id = ?', array($zone))->fetchOne();
         $behaviors = ($zone->getBehaviors()) ? $zone->getBehaviors()->toArray() : array();
         foreach ($zone->getWidgets() as $widget) {

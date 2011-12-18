@@ -80,3 +80,48 @@ div.dm.dm_behavior_sort.dm_behavior_sort_form li span.move img {
     margin-top: 4px;       
     color: #666666;
 }
+.dm_area .dm_area_edit {
+    display: none;
+}
+#dm_page.edit .dm_area .dm_area_edit.dm_behaviors_droppable {
+    background: url("../../dmCorePlugin/images/default_bg.png") repeat-x scroll 50% 50% transparent;
+    border: 1px solid #D3D3D3;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    color: #AAAAAA;
+    display: block;
+    padding: 3px;
+    margin: 3px;
+    font-family: Arial;
+    font-size: 11px;
+}
+#dm_page.edit .dm.dm_edit_behaviors_icon.edit.dm_edit_behaviors_area_icon {
+    margin-top: -30px;
+}
+
+#dm_page .dm_page_edit {
+    display: none;
+}
+#dm_page.edit .dm_page_edit.dm_behaviors_droppable {
+    background: url("../../dmCorePlugin/images/default_bg.png") repeat-x scroll 50% 50% transparent;
+    border: 1px solid #D3D3D3;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    color: #AAAAAA;
+    display: block;
+    padding: 3px;
+    margin: 3px;
+    font-family: Arial;
+    font-size: 11px;    
+}
+#dm_page.edit .dm.dm_edit_behaviors_icon.edit.dm_edit_behaviors_page_icon {
+    margin-top: -30px;
+}
+#dm_page.edit {
+    width: 1000px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 5px;
+}

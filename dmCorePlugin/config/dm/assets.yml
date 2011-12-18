@@ -13,6 +13,8 @@ js:
     mediaBar:                 dmCoreMediaBar
     codeArea:                 dmCoreCodeArea
     ping:                     dmCorePing
+    behaviorsManager:         behaviors/dmBehaviorsManager
+    behaviorsManagerAdmin:    behaviors/dmBehaviorsManagerAdmin
     
   lib:
     symfony_debug:            symfony/debug
@@ -65,7 +67,8 @@ js:
     dataTable:        dataTables-1.6/js/jquery.dataTables.min
     jeditable:        jeditable/jquery.jeditable.min
     colorbox:         colorbox/jquery.colorbox.min
-    maxzindex:        maxzindex/jquery.maxzindex
+    maxzindex:        maxzindex/jquery.maxzindex.min
+    json:             json/jquery.json-2.3.min
 css:
 
   core:
@@ -79,6 +82,7 @@ css:
     mediaBar:         mediaBar
     form:             form
     browsers:         browsers
+    behaviors:        behaviors
     
   lib:
     symfony_debug:    symfony/debug

@@ -5,7 +5,8 @@ class dmFrontPageEditHelper extends dmFrontPageBaseHelper
   protected
   $user,
   $i18n,
-  $widgetTypeManager;
+  $widgetTypeManager,
+  $behaviorsManager;
 
   public function initialize(array $options)
   {
@@ -18,6 +19,7 @@ class dmFrontPageEditHelper extends dmFrontPageBaseHelper
     $this->i18n = $this->serviceContainer->getService('i18n');
     $this->widgetTypeManager = $this->serviceContainer->getService('widget_type_manager');
     $this->moduleManager = $this->serviceContainer->getService('module_manager');
+    $this->behaviorsManager = $this->serviceContainer->getService('behaviors_manager');
   }
 
   public function renderArea($name, $options = array())
@@ -39,10 +41,7 @@ class dmFrontPageEditHelper extends dmFrontPageBaseHelper
 'dm_area',
 'dm_'.$prefix.'_'.$type,
 'dm_area_'.$area['id'],
-        
-       
-// TODO - TheCelavi add support for attaching behaviors to the areas!!!        
-//($this->user->can('behavior_edit') || $this->user->can('behavior_add') || $this->user->can('behavior_delete')) ? 'dm_behaviors_attachable' : ''
+($this->behaviorsManager->isAreaAttachable()) ? 'dm_behaviors_attachable' : ''
     ));
     
     
@@ -60,6 +59,15 @@ class dmFrontPageEditHelper extends dmFrontPageBaseHelper
 
     $html .= $this->helper->open($tagName, $options);
 
+    if ($this->behaviorsManager->isAreaAttachable()){
+        $html .= '<a class="dm dm_area_edit' . (($this->user->can('behavior_add')) ? ' dm_behaviors_droppable' : '') . '">' . (('content' === $type) ? $this->i18n->__('Content') : $this->i18n->__('Layout')) . '</a>';
+
+        if ($this->user->can('behavior_edit') || $this->user->can('behavior_delete')) 
+        {
+          $html .= '<a class="dm dm_edit_behaviors_icon dm_edit_behaviors_area_icon s16_gear s16" title="'.$this->i18n->__('Edit behaviors').'"></a>';
+        }
+    }
+    
     $html .= '<div class="dm_zones clearfix">';
 
     $html .= $this->renderAreaInner($area);
@@ -87,15 +95,15 @@ class dmFrontPageEditHelper extends dmFrontPageBaseHelper
         'dm_zone', 
         'dm_zone_'.$zone['id'],
         $zone['css_class'],
-        ($this->user->can('behavior_edit') || $this->user->can('behavior_add') || $this->user->can('behavior_delete')) ? 'dm_behaviors_attachable' : ''
+        $this->behaviorsManager->isZoneAttachable() ? 'dm_behaviors_attachable' : ''
         )).'"'.$style.'>';
 
     if ($this->user->can('zone_edit'))
     {
-      $html .= '<a class="dm dm_zone_edit" title="'.$this->i18n->__('Edit this zone').'"></a>';
+      $html .= '<a class="dm dm_zone_edit' . (($this->user->can('behavior_add') && $this->behaviorsManager->isZoneAttachable()) ? ' dm_behaviors_droppable' : '') . '" title="'.$this->i18n->__('Edit this zone').'"></a>';
     }
-
-    if ($this->user->can('behavior_edit') || $this->user->can('behavior_delete')) 
+    
+    if (($this->user->can('behavior_edit') || $this->user->can('behavior_delete')) && $this->behaviorsManager->isZoneAttachable()) 
     {
       $html .= '<a class="dm dm_edit_behaviors_icon s16_gear s16" title="'.$this->i18n->__('Edit behaviors').'"></a>';
     }
@@ -134,7 +142,7 @@ class dmFrontPageEditHelper extends dmFrontPageBaseHelper
     /*
      * Open widget wrap with wrapped user's classes
      */
-    $html = '<div class="'.$widgetWrapClass.' dm_widget_'.$widget['id'].(($this->user->can('behavior_edit') || $this->user->can('behavior_add') || $this->user->can('behavior_delete')) ? ' dm_behaviors_attachable' : '').'" id="dm_widget_'.$widget['id'].'">';
+    $html = '<div class="'.$widgetWrapClass.' dm_widget_'.$widget['id'].' dm_behaviors_attachable" id="dm_widget_'.$widget['id'].'">';
 
     if (!$is_programmatically)
     {
@@ -155,10 +163,10 @@ class dmFrontPageEditHelper extends dmFrontPageBaseHelper
 
         $title = $this->i18n->__('Edit this %1%', array('%1%' => $this->i18n->__($widgetPublicName)));
 
-        $html .= '<a class="dm dm_widget_edit" title="'.htmlentities($title, ENT_COMPAT, 'UTF-8').'"></a>';
+        $html .= '<a class="dm dm_widget_edit' . (($this->user->can('behavior_add') && $this->behaviorsManager->isWidgetAttachable()) ? ' dm_behaviors_droppable' : '') . '" title="'.htmlentities($title, ENT_COMPAT, 'UTF-8').'"></a>';
       }
 
-      if ($this->user->can('behavior_edit') || $this->user->can('behavior_delete')) 
+      if (($this->user->can('behavior_edit') || $this->user->can('behavior_delete')) && $this->behaviorsManager->isWidgetAttachable())
       {
         $html .= '<a class="dm dm_edit_behaviors_icon s16_gear s16" title="'.$this->i18n->__('Edit behaviors').'"></a>';
       }

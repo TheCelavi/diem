@@ -76,13 +76,15 @@ abstract class dmBehaviorBaseView {
                 array(), 
                 (array) json_decode((string) $this->behavior['dm_behavior_value'], true),
                 array(
-                    'dm_behavior_id'            =>  $this->behavior['id'],
-                    'dm_behavior_sequence'      => $this->behavior['position'],
-                    'dm_behavior_key'           =>  $this->behavior['dm_behavior_key'],
-                    'dm_behavior_enabled'       =>  $this->behavior['dm_behavior_enabled'],
-                    'dm_behavior_attached_to'   =>  ($this->behavior['dm_behavior_attached_to'] == 'content') ? 
-                            '.dm_widget_'.$this->behavior['dm_widget_id'].' '.$this->behavior['dm_behavior_attached_to_selector'] :
-                            '.dm_'.$this->behavior['dm_behavior_attached_to'].'_'.$this->behavior['dm_'.$this->behavior['dm_behavior_attached_to'].'_id']
+                    'dm_behavior_id'                    =>  $this->behavior['id'],
+                    'dm_behavior_key'                   =>  $this->behavior['dm_behavior_key'],                    
+                    'dm_behavior_attached_to'           =>  $this->behavior['dm_behavior_attached_to'],
+                    'dm_behavior_attached_to_id'        =>  (int) $this->behavior['dm_page_id'] + $this->behavior['dm_area_id'] + $this->behavior['dm_zone_id'] + $this->behavior['dm_widget_id'],
+                    'dm_behavior_attached_to_content'   =>  ($this->behavior['dm_behavior_attached_to_selector'] != '') ? true : false,
+                    'dm_behavior_attached_to_selector'  =>  ($this->behavior['dm_behavior_attached_to_selector'] != '') ? $this->behavior['dm_behavior_attached_to_selector'] : null,
+                    'dm_behavior_sequence'              =>  $this->behavior['position'],
+                    'dm_behavior_enabled'               =>  $this->isEnabled(),
+                    'dm_behavior_valid'                 =>  true
                 ),
                 dmString::toArray($vars)
         );
@@ -102,14 +104,15 @@ abstract class dmBehaviorBaseView {
     public function renderDefault() {
         if ($this->context->getUser()->can('behavior_edit') || $this->context->getUser()->can('behavior_delete') || $this->context->getUser()->can('behavior_add')) {
             $json = json_encode(array(
-                'dm_behavior_key'           =>  $this->behavior['dm_behavior_key'],
-                'dm_behavior_id'            =>  $this->behavior['id'],
-                'dm_behavior_valid'         =>  $this->isValid(),
-                'dm_behavior_enabled'       =>  $this->isEnabled(),
-                'dm_behavior_sequence'      => $this->behavior['position'],
-                'dm_behavior_attached_to'   =>  ($this->behavior['dm_behavior_attached_to'] == 'content') ? 
-                            '.dm_widget_'.$this->behavior['dm_widget_id'].' '.$this->behavior['dm_behavior_attached_to_selector'] :
-                            '.dm_'.$this->behavior['dm_behavior_attached_to'].'_'.$this->behavior['dm_'.$this->behavior['dm_behavior_attached_to'].'_id']
+                'dm_behavior_id'                    =>  $this->behavior['id'],
+                'dm_behavior_key'                   =>  $this->behavior['dm_behavior_key'],                    
+                'dm_behavior_attached_to'           =>  $this->behavior['dm_behavior_attached_to'],
+                'dm_behavior_attached_to_id'        =>  (int) $this->behavior['dm_page_id'] + $this->behavior['dm_area_id'] + $this->behavior['dm_zone_id'] + $this->behavior['dm_widget_id'],
+                'dm_behavior_attached_to_content'   =>  ($this->behavior['dm_behavior_attached_to_selector'] != '') ? true : false,
+                'dm_behavior_attached_to_selector'  =>  ($this->behavior['dm_behavior_attached_to_selector'] != '') ? $this->behavior['dm_behavior_attached_to_selector'] : null,
+                'dm_behavior_sequence'              =>  $this->behavior['position'],
+                'dm_behavior_enabled'               =>  $this->isEnabled(),
+                'dm_behavior_valid'                 =>  $this->isValid()
             ));
         } else {
             $json = null;

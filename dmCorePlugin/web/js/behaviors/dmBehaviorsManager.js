@@ -1,48 +1,117 @@
 (function($) {
     $.dm.behaviorsManager = {
+        /**
+         * The list of behaviors that are loaded
+         */
         behaviors:      null,      
-        state:          0, // nothing = 0 || constructed = 1 || initialized = 2 || started = 3
-        _construct: function() {                        
-            // Init behavior manager
-            $.dm.behaviorsManager.behaviors = new Array();
-            var $beahvior_settings = $('div.dm_behaviors'); // Destroy after?            
-            if ($beahvior_settings.length == 0) return;            
-            var behaviors = $beahvior_settings.metadata().behaviors;
+        /**
+         * The current state of the behaviors manager
+         * nothing = 0 || constructed = 1 || initialized = 2 || started = 3 || stoped = 2 || destroyed = 1 
+         */        
+        state:          0,
+        /**
+         * Initializes the behaviors manager, loads behaviors settings
+         */
+        initializeManager: function() { 
+            var self = this;
+            self.behaviors = new Array();
+            var $beahviors_settings = $('div.dm_behaviors');      
+            if ($beahviors_settings.length == 0) {
+                self.state = 1;
+                return;            
+            };
+            var behaviors = $beahviors_settings.metadata().behaviors;
+            $('div.dm_behaviors').remove();
             $.each(behaviors, function(){                
-                 $.dm.behaviorsManager.behaviors.push(this);
+                 self.behaviors.push(this);
             });            
-            $.dm.behaviorsManager.state = 1;
+            self.state = 1;
         },
-        init: function() {      
-            if ($.dm.behaviorsManager.state < 1) $.dm.behaviorsManager._construct();
-            // Initialize behaviors
-            $.each($.dm.behaviorsManager.behaviors, function(){
-                // Maybe behavior is defect...
+        /**
+         * Initializes all the behaviors by calling init(behaviorSettings) method
+         */
+        init: function() {  
+            var self = this;
+            if (self.state < 1) self.initializeManager();
+            $.each(self.behaviors, function(){
                 try {
                     $.dm.behaviors[this.dm_behavior_key].init(this);
-                }catch(e) {
-                    alert(e);
-                    // TODO AJAX call to the function to register error to the DIEM log!!!!
-                    // Valuable feedback to the developer
+                } catch(e) {
+                    self.reportError({
+                        javascript_exception    :   e.toString(),
+                        method                  :   'init',
+                        behavior_settings       :   this
+                    });
                 };
             });
-            $.dm.behaviorsManager.state = 2;
+            self.state = 2;
         },
+        /**
+         * Starts all behaviors by calling start() method
+         */
         start: function() {
-            if ($.dm.behaviorsManager.state < 2) $.dm.behaviorsManager.init();
-            $.each($.dm.behaviorsManager.behaviors, function(){
-                // Maybe behavior is defect...
+            var self = this;
+            if (self.state < 2) self.init();
+            $.each(self.behaviors, function(){
                 try {
                     $.dm.behaviors[this.dm_behavior_key].start();
                 }catch(e) {
-                    // TODO AJAX call to the function to register error to the DIEM log!!!!
-                    // Valuable feedback to the developer
+                    self.reportError({
+                        javascript_exception    :   e.toString(),
+                        method                  :   'start',
+                        behavior_settings       :   this
+                    });
                 };
             });
-            $.dm.behaviorsManager.state = 3;
+            self.state = 3;
+        },
+        /**
+         * Utility function - reports the error on client side
+         * the error is saved as DmError object and can be viewed in admin/system/log/errors
+         * later on for debug
+         */
+        reportError: function(data) {
+            if (dm_configuration.debug) {
+                alert(data.javascript_exception + '@' + data.method);
+            };
+            $.ajax(dm_configuration.script_name + '+/dmBehaviors/logBehaviorException', {
+                data        :           $.extend({}, { 
+                    dm_behavior_error   :   true,
+                    page_module         :   dm_configuration.module,
+                    page_action         :   dm_configuration.action,
+                    page_culture        :   dm_configuration.culture,
+                    page_id             :   dm_configuration.page_id,
+                    script_name         :   dm_configuration.script_name
+                }, data),
+                type        :           'post',
+                error       :      function(xhr, textStatus, errorThrown) {return;},
+                success: function(html) {return;}
+            });
+        },
+        /**
+         * Utility function - gets the CSS selector based on the settings of the behavior
+         * @param behaviorSettings JSON {
+         *      dm_behavior_id: int
+         *      dm_behavior_key: string      
+         *      dm_behavior_attached_to: string (page|area|zone|widget)
+         *      dm_behavior_attached_to_id: int
+         *      dm_behavior_attached_to_content: boolean
+         *      dm_behavior_sequence: int
+         *      dm_behavior_attached_to_selector: string or null
+         *      dm_behavior_enabled: boolean
+         *      dm_behavior_valid: boolean
+         * }
+         * @return string
+         */
+        getCssXPath: function(behaviorSettings) {
+            var path = '.dm_' + behaviorSettings.dm_behavior_attached_to + '_' + behaviorSettings.dm_behavior_attached_to_id;
+            if (behaviorSettings.dm_behavior_attached_to_content) 
+                path += ' ' + behaviorSettings.dm_behavior_attached_to_selector;
+            return path;
         }
     };
     
-    $.dm.behaviorsManager.start();
-    
-})(jQuery);
+    $.dm.behaviorsManager.init();
+    // If page is currently being edited - behaviors should not run.
+    if (!$('#dm_page').hasClass('edit')) $.dm.behaviorsManager.start();
+ })(jQuery);

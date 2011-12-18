@@ -491,7 +491,10 @@ abstract class dmFrontPageBaseHelper extends dmConfigurable
 	{
 		return $this->getOption('is_html5');
 	}
-        
+        /**
+         * Renders behaviors metadata, loads required javascripts and stylesheets
+         * @return string
+         */
         public function renderBehaviors() {
             if (is_null($areas = $this->areas)) $areas = $this->getAreas ();
             $page = array(
