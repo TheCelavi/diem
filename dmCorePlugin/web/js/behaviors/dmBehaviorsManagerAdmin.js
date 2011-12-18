@@ -13,31 +13,33 @@
                 return;
             }
             if (self.state == 2) return; 
-            $.each(self.behaviors, function(){
+            for(var i = self.behaviors.length - 1; i >= 0; --i){
                 try {
-                    $.dm.behaviors[this.dm_behavior_key].stop();
-                }catch(e) {
+                    $.dm.behaviors[self.behaviors[i].dm_behavior_key].stop();
+                } catch(e) {
                     self.reportError({
                         javascript_exception    :   e.toString(),
-                        method                  :   'start',
+                        method                  :   'stop',
                         behavior_settings       :   this
                     });
                 };
-            });
+            };
             self.state = 2;
         },
         destroy: function() {
             var self = this;
             if (self.state == 1) return;
             if (self.state == 2) {
-                try {
-                    $.dm.behaviors[this.dm_behavior_key].destroy();
-                }catch(e) {
-                    self.reportError({
-                        javascript_exception    :   e.toString(),
-                        method                  :   'start',
-                        behavior_settings       :   this
-                    });
+                for(var i = self.behaviors.length - 1; i >= 0; --i){
+                    try {
+                        $.dm.behaviors[self.behaviors[i].dm_behavior_key].destroy();
+                    } catch(e) {
+                        self.reportError({
+                            javascript_exception    :   e.toString(),
+                            method                  :   'destroy',
+                            behavior_settings       :   this
+                        });
+                    };
                 };
                 self.state = 1;
             };
