@@ -35,7 +35,7 @@
             if (self.state < 1) self.initializeManager();
             $.each(self.behaviors, function(){
                 try {
-                    $.dm.behaviors[this.dm_behavior_key].init(this);
+                    $.dm.behaviors[this.dm_behavior_key].init(this); // Init this behavior
                 } catch(e) {
                     self.reportError({
                         javascript_exception    :   e.toString(),
@@ -54,7 +54,7 @@
             if (self.state < 2) self.init();
             $.each(self.behaviors, function(){
                 try {
-                    $.dm.behaviors[this.dm_behavior_key].start();
+                    $.dm.behaviors[this.dm_behavior_key].start(this); // Start this behavior
                 }catch(e) {
                     self.reportError({
                         javascript_exception    :   e.toString(),
@@ -101,10 +101,19 @@
          *      dm_behavior_enabled: boolean
          *      dm_behavior_valid: boolean
          * }
+         * @param withInnerContainer boolean wheter to include container 
          * @return string
          */
-        getCssXPath: function(behaviorSettings) {
+        getCssXPath: function(behaviorSettings, withInnerContainer) {
             var path = '.dm_' + behaviorSettings.dm_behavior_attached_to + '_' + behaviorSettings.dm_behavior_attached_to_id;
+            if (withInnerContainer && !behaviorSettings.dm_behavior_attached_to_content) {
+                switch(behaviorSettings.dm_behavior_attached_to) {
+                    case 'area': path += ' ' + '.dm_zones'; break;
+                    case 'zone': path += ' ' + '.dm_widgets'; break;
+                    case 'widget': path += ' ' + '.dm_widget_inner'; break;
+                }
+            };
+            if (withInnerContainer && behaviorSettings.dm_behavior_attached_to_content) path += ' ' + '.behaviorable_container';
             if (behaviorSettings.dm_behavior_attached_to_content) 
                 path += ' ' + behaviorSettings.dm_behavior_attached_to_selector;
             return path;

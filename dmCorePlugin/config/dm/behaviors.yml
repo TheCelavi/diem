@@ -1,2 +1,8 @@
-## Empty behaviors file
+## Default behaviors - remove them if you do not want them
 ---
+dmBehaviors:
+  jQueryEffectsFadeBehavior:
+    section: jQuery Effects
+    name: Fade
+    form: dmJQueryEffectsFadeForm
+    view: dmJQueryEffectsFadeView

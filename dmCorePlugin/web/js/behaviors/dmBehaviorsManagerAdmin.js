@@ -3,8 +3,8 @@
         contextMenuTemplate: null,
         contextMenu: null,
         settings: null,
-        /**
-         * Initializes administration of the behaviors
+        /*
+         * Stops all behaviors
          */
         stop: function() {
             var self = this;
@@ -15,7 +15,7 @@
             if (self.state == 2) return; 
             for(var i = self.behaviors.length - 1; i >= 0; --i){
                 try {
-                    $.dm.behaviors[self.behaviors[i].dm_behavior_key].stop();
+                    $.dm.behaviors[self.behaviors[i].dm_behavior_key].stop(self.behaviors[i]); // Stop this behavior
                 } catch(e) {
                     self.reportError({
                         javascript_exception    :   e.toString(),
@@ -26,13 +26,16 @@
             };
             self.state = 2;
         },
+        /*
+         * Destroys all behaviors
+         */
         destroy: function() {
             var self = this;
             if (self.state == 1) return;
             if (self.state == 2) {
                 for(var i = self.behaviors.length - 1; i >= 0; --i){
                     try {
-                        $.dm.behaviors[self.behaviors[i].dm_behavior_key].destroy();
+                        $.dm.behaviors[self.behaviors[i].dm_behavior_key].destroy(self.behaviors[i]); // Destroy this behavior
                     } catch(e) {
                         self.reportError({
                             javascript_exception    :   e.toString(),
@@ -48,6 +51,9 @@
                 self.destroy();
             };  
         },
+        /**
+         * Initializes administration of the behaviors
+         */
         initializeAdministration: function() {
             var self = this;
             self.loadSettings();
@@ -62,9 +68,9 @@
             /*
              * Append helper elements
              */
-            $('body').append(self.contextMenuTemplate);
-            $('body').append(self.contextMenu);
-            $('#dm_page').addClass('dm_page_' + dm_configuration.page_id);
+            $('body').append(self.contextMenuTemplate); // Appending context menu template
+            $('body').append(self.contextMenu); // Appending actual context menu
+            $('#dm_page').addClass('dm_page_' + dm_configuration.page_id); // Providing support for attaching behaviors onto page
             /*
              * Tracking events - behavior added, behavior deleted
              * Widget, zone added, deleted...
@@ -78,7 +84,7 @@
                 self.enableAddBehaviors();
             }).bind('zoneAdded', function(){
                 self.enableAddBehaviors();
-            }).bind('widgetDeleted', function(e, id){
+            }).bind('widgetDeleted', function(e, id){ // It is not required to fire destroy() - behaviors are removed
                 var $widget = $('.dm_widget_' + id);
                 var $inner = $widget.find('.dm_behaviors_attachable');
                 $.each($inner, function(){
@@ -86,7 +92,7 @@
                     self.cleanUpBehaviorManager(meta.dm_behavior_attached_to, meta.dm_behavior_attached_to_id);
                 });
                 self.cleanUpBehaviorManager('widget', id);
-            }).bind('zoneDeleted', function(e, id){
+            }).bind('zoneDeleted', function(e, id){ // It is not required to fire destroy() - behaviors are removed
                 var $zone = $('.dm_zone_' + id);
                 var $inner = $zone.find('.dm_behaviors_attachable');
                 $.each($inner, function(){
@@ -98,8 +104,10 @@
             /*
              * Add some utilities to the helper elements, if required
              */
-            $('.dm_edit_behaviors_icon').tipsy({gravity: $.fn.tipsy.autoNorth});
-            // Hide context menu, if required
+            $('.dm_edit_behaviors_icon').tipsy({gravity: $.fn.tipsy.autoNorth});            
+            /*
+             * Hide context menu, if required
+             */
             $(document).click(function(evt){
                 if (self.contextMenuTemplate == null) return;
                 if (!$(evt.target).hasClass('dm_edit_behaviors_icon')) {
@@ -118,6 +126,7 @@
          * Utility function - when we remove zone or widget
          * It is required to remove all inner behaviors from the memory
          * They are deleted from database, but we can avoid refresh or another HTTP request
+         * We do not need to call destroy()
          */
         cleanUpBehaviorManager: function(attachedTo, attachedToId) {
             var self = this;
@@ -139,6 +148,7 @@
         /**
          * Utility function, loads the settings for the manager
          * privileges, translations, etc...
+         * And initialize administration for the accepting behaviors management
          */
         loadSettings: function() {
             var self = this;
@@ -326,6 +336,8 @@
                 $.each(self.behaviors, function(){
                     if (self.getCssXPath(this) == self.getCssXPath(attachedToMetadata)) {
                         var $cmi = self.contextMenuTemplate.find('li#dm_behavior_cm_item_' + this.dm_behavior_key).clone();
+                        if (!this.dm_behavior_enabled) $cmi.addClass('disabled');
+                        if (!this.dm_behavior_valid) $cmi.addClass('invalid');
                         $cmi.prop('id', 'dm_behavior_cm_item_cloned_' + this.dm_behavior_id).click(function(){
                             self.editBehavior($cmi.prop('id').replace('dm_behavior_cm_item_cloned_',''));
                         });
@@ -350,7 +362,6 @@
             var self = this;
             $('.dm_behaviors_droppable').droppable({
                 accept      :       '.behavior_add',
-                //hoverClass  :       'droppable_hover',
                 tolerance   :       'pointer',
                 greedy      :       true,
                 drop        :       function(event, ui) {
@@ -454,33 +465,55 @@
                     } else {
                         $.fn.dmExtractEncodedAssets(data); 
                         var addBehavior = true;
+                        var behavior = null;
                         if (data.dm_behavior_clipboard_action == 'cut') {
-                            $.each(self.behaviors, function(){                                
+                            $.each(self.behaviors, function(index){                                
                                 if (this.dm_behavior_id == data.dm_behavior_data.dm_behavior_id) {                                   
                                     this.dm_behavior_attached_to = data.dm_behavior_data.dm_behavior_attached_to;
                                     this.dm_behavior_attached_to_id = data.dm_behavior_data.dm_behavior_attached_to_id;
                                     this.dm_behavior_attached_to_content = data.dm_behavior_data.dm_behavior_attached_to_content;
                                     this.dm_behavior_attached_to_selector = data.dm_behavior_data.dm_behavior_attached_to_selector;
-                                    $('body').trigger('behaviorDeleted',[this.dm_behavior_id]);
-                                    $('body').trigger('behaviorAdded',[this]);
+                                    $('body').trigger('behaviorDeleted',[this.dm_behavior_id]); // Notify sort behaviors about change
+                                    $('body').trigger('behaviorAdded',[this]); // Notify sort behaviors about change
                                     addBehavior = false;
+                                    behavior = this;
+                                    try {
+                                        $.dm.behaviors[behavior.dm_behavior_key].destroy(behavior); // Destroy this behavior                                    
+                                    } catch(e) {
+                                        self.reportError({
+                                            javascript_exception    :   e.toString(),                                        
+                                            method                  :   'destroy',
+                                            behavior_settings       :   behavior
+                                        });
+                                    };
                                     return false;
                                 };
                             });
-                        } 
+                        }; 
                         if (addBehavior){ // copy or it is cutted from different page...
-                            self.behaviors.push(data.dm_behavior_data);
+                            behavior = data.dm_behavior_data;
+                            self.behaviors.push(behavior);
                             self.behaviors.sort(function(a,b){
                                 return a.dm_behavior_sequence - b.dm_behavior_sequence;
                             });   
-                            $('body').trigger('behaviorAdded',[data.dm_behavior_data]);
-                        }
+                            $('body').trigger('behaviorAdded',[data.dm_behavior_data]); // Notify sort behaviors about change
+                        };
+                        try {
+                            $.dm.behaviors[behavior.dm_behavior_key].destroy(behavior); // Initialize this behavior                                    
+                        } catch(e) {
+                            self.reportError({
+                                javascript_exception    :   e.toString(),                                        
+                                method                  :   'init',
+                                behavior_settings       :   behavior
+                            });
+                        };
                     };
                 }
             });
         },
         /**
          * Delete the behavior from the database
+         * Destroy it from the memory and DOM
          * @param dm_behavior_id integer, id of the behavior
          */
         deleteBehavior: function(dm_behavior_id) {
@@ -512,7 +545,18 @@
                                 return false;
                             };
                         });                        
-                        if (search > -1) self.behaviors.splice(search, 1);
+                        if (search > -1) {                            
+                            try {
+                                $.dm.behaviors[self.behaviors[search].dm_behavior_key].destroy(self.behaviors[search]); // Destroy this behavior
+                            } catch(e) {
+                                self.reportError({
+                                    javascript_exception    :   e.toString(),
+                                    method                  :   'destroy',
+                                    behavior_settings       :   this
+                                });
+                            };
+                            self.behaviors.splice(search, 1);
+                        }
                         $('body').trigger('behaviorDeleted',[dm_behavior_id]); // Notify sort behaviors about change
                     };
                 }
@@ -638,8 +682,30 @@
                             return;
                         }                        
                         $.each(self.behaviors, function(index){
-                            if (this.dm_behavior_id == data.dm_behavior_id) {
-                                self.behaviors[index] = data;
+                            if (this.dm_behavior_id == data.dm_behavior_data.dm_behavior_id) {
+                                // Delete current behavior
+                                try {
+                                    $.dm.behaviors[this.dm_behavior_key].destroy(this); // Destroy this behavior
+                                } catch(e) {
+                                    self.reportError({
+                                        javascript_exception    :   e.toString(),
+                                        method                  :   'destroy',
+                                        behavior_settings       :   this
+                                    });
+                                };
+                                
+                                self.behaviors[index] = data.dm_behavior_data;
+                                // Reload behavior in memory
+                                try {
+                                    $.dm.behaviors[self.behaviors[index].dm_behavior_key].init(self.behaviors[index]); // Load it
+                                } catch(e) {
+                                    self.reportError({
+                                        javascript_exception    :   e.toString(),
+                                        method                  :   'init',
+                                        behavior_settings       :   this
+                                    });
+                                };
+                                
                                 return false;
                             };
                         });
@@ -769,7 +835,7 @@
                                 if (inMemory.dm_behavior_id == this.dm_behavior_id) {
                                     inMemory.dm_behavior_sequence = this.dm_behavior_sequence;
                                 }
-                            });                           
+                            });                            
                         });
                         self.behaviors.sort(function(a,b){
                             return a.dm_behavior_sequence - b.dm_behavior_sequence;
