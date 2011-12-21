@@ -49,7 +49,7 @@
             if (self.state > 2) {
                 self.stop();
                 self.destroy();
-            };  
+            };
         },
         /**
          * Initializes administration of the behaviors
@@ -118,7 +118,10 @@
              * Enable play-stop behaviors
              */
             $('body').bind('runBehaviors', function(e, doRun){
-                if (doRun) self.start();
+                if (doRun) {
+                    $.dm.removeTipsy();
+                    self.start();
+                }
                 else self.stop();
             });
         },
@@ -829,15 +832,15 @@
                             $.dm.ctrl.errorDialog(data.error.title, data.error.message);
                             return;
                         };
-                        $.each($.dm.behaviorsManager.behaviors, function(){
-                            var inMemory = this;
-                            $.each(data.dm_behavior_data, function(){
-                                if (inMemory.dm_behavior_id == this.dm_behavior_id) {
-                                    inMemory.dm_behavior_sequence = this.dm_behavior_sequence;
-                                }
-                            });                            
-                        });
-                        self.behaviors.sort(function(a,b){
+                        
+                        for(var i = 0; i < $.dm.behaviorsManager.behaviors.length; i++){
+                            for(var j = 0; j < data.dm_behavior_data.length; j++){
+                                if ($.dm.behaviorsManager.behaviors[i].dm_behavior_id == parseInt(data.dm_behavior_data[j].dm_behavior_id)) {
+                                    $.dm.behaviorsManager.behaviors[i].dm_behavior_sequence = parseInt(data.dm_behavior_data[j].dm_behavior_sequence);
+                                };
+                            };
+                        };
+                        $.dm.behaviorsManager.behaviors.sort(function(a,b){
                             return a.dm_behavior_sequence - b.dm_behavior_sequence;
                         });                                             
                         $dialog.dialog('close');

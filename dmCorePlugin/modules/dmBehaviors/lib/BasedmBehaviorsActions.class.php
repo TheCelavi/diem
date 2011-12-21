@@ -273,7 +273,7 @@ class BasedmBehaviorsActions extends dmBaseActions {
             if ($request->isMethod('post') && $form->bindAndValid($request) && $request->hasParameter('and_save')){
                 if ($form->saveSortOrder()) return $this->renderJson(array(
                     'error' => false,              
-                    'dm_behavior_data' => $form->getValue('behaviors')
+                    'dm_behavior_data' => json_decode ($form->getValue('behaviors'), true)
                 ));
                 else return $this->renderError (
                     $this->getI18n ()->__('Error'),

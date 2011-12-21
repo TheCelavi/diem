@@ -4,7 +4,6 @@ class dmJQueryEffectsFadeForm extends dmBehaviorBaseForm {
     
     protected $events = array(
             'load'          =>      'Content load',
-            'click'         =>      'Mouse click',
             'mouseover'     =>      'Mouse over',
             'mouseout'      =>      'Mouse out'
     );

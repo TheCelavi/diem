@@ -18,6 +18,7 @@ class dmJQueryEffectsFadeView extends dmBehaviorBaseView {
             array(
                 'lib.ui-core',
                 'lib.ui-effects-core',
+                'lib.easing',
                 'core.jQueryEffectsFadeBehavior'
             )
         );
