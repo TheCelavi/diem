@@ -6,3 +6,8 @@ dmBehaviors:
     name: Fade
     form: dmJQueryEffectsFadeForm
     view: dmJQueryEffectsFadeView
+  dmTipsyBehavior:
+    section: Utility
+    name: Tipsy
+    form: dmTipsyBehaviorForm
+    view: dmTipsyBehaviorView

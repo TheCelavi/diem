@@ -18,6 +18,7 @@ js:
     behaviorsManagerRun:      behaviors/dmBehaviorsManagerRun
     # Build in behaviors
     jQueryEffectsFadeBehavior: behaviors/defaults/jQueryEffectsFadeBehavior
+    dmTipsyBehavior:           behaviors/defaults/dmTipsyBehavior 
     
   lib:
     symfony_debug:            symfony/debug

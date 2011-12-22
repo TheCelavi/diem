@@ -48,8 +48,9 @@ class dmFrontBehaviorsAddMenu extends dmMenu {
         if (!is_null($data)) {
             if ($data['dm_behavior_clipboard_action'] == 'cut' && !$user->can('behavior_delete')) return $this; 
             $behaviorsManager = $this->serviceContainer->getService('behaviors_manager');
-            try {
+            try {                
                 $behavior = DmBehaviorTable::getInstance()->findOneById($data['dm_behavior_id']);
+                if (!$behavior) return $this;
                 $settings = $behaviorsManager->getBehaviorSettings($behavior->getDmBehaviorKey());
             } catch (Exception $e) {
                 return $this;
