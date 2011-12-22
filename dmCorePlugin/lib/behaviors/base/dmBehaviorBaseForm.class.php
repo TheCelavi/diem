@@ -83,7 +83,7 @@ abstract class dmBehaviorBaseForm extends dmForm {
         }
 
         $lastBehaviorValue = dmDb::query('DmBehavior b')
-                ->withI18n(null, null, 'b')
+                ->withI18n()
                 ->where('b.dm_behavior_key = ?', array($this->dmBehavior->getDmBehaviorKey()))
                 ->orderBy('b.updated_at desc')
                 ->limit(1)
@@ -95,13 +95,7 @@ abstract class dmBehaviorBaseForm extends dmForm {
         if (!$lastBehaviorValue) {
             return $defaults;
         }
-
-        $values = json_decode((string) $lastBehaviorValue['value'], true);
-
-        foreach ($fields as $field) {
-            $defaults[$field] = dmArray::get($values, $field, dmArray::get($defaults, $field));
-        }
-
+        $defaults = json_decode((string) $lastBehaviorValue['value'], true);
         return $defaults;
     }
 

@@ -59,7 +59,7 @@ class dmJQueryEffectsFadeForm extends dmBehaviorBaseForm {
         return array(
             'event' => 'load',
             'opacity' => 50,
-            'duration' => 1000,
+            'duration' => 100,
             'easing' => 'jswing'
         );
     }

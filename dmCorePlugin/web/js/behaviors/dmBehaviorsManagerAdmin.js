@@ -56,6 +56,8 @@
          */
         initializeAdministration: function() {
             var self = this;
+            self.initializeManager();
+            self.init();
             self.loadSettings();
                        
             
@@ -122,7 +124,12 @@
                     $.dm.removeTipsy();
                     self.start();
                 }
-                else self.stop();
+                else {
+                    self.stop();
+                    // If there is no good destroy() method for the used plugin...
+                    self.enableAddBehaviors();
+                    self.enableEditBehaviors(); 
+                };
             });
         },
         /**
@@ -173,10 +180,9 @@
                             $('#dm_page').prepend($('<a class="dm dm_page_edit dm_behaviors_droppable ui-droppable">Page</a>'));
                         };
                     };
-                    // When settings are loaded, do the magic...
+                    // When settings are loaded, do the magic...                                       
                     self.reloadBehaviorsMenu();
                     self.initializeContextMenu();
-                    self.init();
                     self.enableAddBehaviors();
                     self.enableEditBehaviors();                    
                     // If page is currently being edited - behaviors should not run.
