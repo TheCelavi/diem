@@ -495,21 +495,20 @@ abstract class dmFrontPageBaseHelper extends dmConfigurable
          * Renders behaviors metadata, loads required javascripts and stylesheets
          * @return string
          */
-        public function renderBehaviors() {
+        public function renderBehaviors() {            
             if (is_null($areas = $this->areas)) $areas = $this->getAreas ();
             $page = array(
                 'id' => $this->page->getId(),
                 'Areas' => $areas
-            );
-            $output = $this->serviceContainer->getService('behaviors_manager')->renderBehaviors($page);        
-            
-            foreach($this->serviceContainer->getService('behaviors_manager')->getJavascripts() as $javascript)
-            {
-                $this->serviceContainer->getService('response')->addJavascript($javascript);
-            }
-
-            foreach($this->serviceContainer->getService('behaviors_manager')->getStylesheets() as $stylesheet => $options)
+            );        
+            $behaviorsManager = $this->serviceContainer->getService('behaviors_manager');            
+            $output = $behaviorsManager->renderBehaviors($page);                    
+            foreach($behaviorsManager->getJavascripts() as $javascript)
             {                
+                $this->serviceContainer->getService('response')->addJavascript($javascript);
+            }            
+            foreach($behaviorsManager->getStylesheets() as $stylesheet => $options)
+            {   
 		$this->serviceContainer->getService('response')->addStylesheet($stylesheet, '', $options);
             }
             return $output;

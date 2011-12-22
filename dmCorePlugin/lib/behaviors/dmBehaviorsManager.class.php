@@ -30,6 +30,16 @@ class dmBehaviorsManager extends dmConfigurable {
         $this->context = $context;
         // The mode of instance
         $user = $this->context->getServiceContainer()->getService('user');
+        
+        
+        
+        // HELP HERE PLEASE !!!
+        // MAYBE USER CAN NOT ADMINISTRATE BEHAVIORS
+        // BUT IF HE CAN CHANGE CONTENT
+        // THIS SHOULD BE REGISTERED AS ADMIN MODE!!!
+        // WHAT MORE PRIVILEGES TO CHECK ????
+        
+        
         $this->adminMode = $user->can('behavior_add') || $user->can('behavior_edit') || $user->can('behavior_delete');
         
         $this->configure($options);
@@ -102,7 +112,6 @@ class dmBehaviorsManager extends dmConfigurable {
         $canCache = !$this->adminMode; // If it is in admin mode, do not use cached output
         $this->page = $page;
         if ($canCache && $cache = $this->getCache()) return $cache;
-        
         $behaviors = $this->getBehaviorsForPage($this->page);
         $behaviorsSettings = array();
         
@@ -134,11 +143,10 @@ class dmBehaviorsManager extends dmConfigurable {
         ) : '';
         
         if ($canCache && $this->isCachable()) {            
-            $this->setCache($behaviorOutput);
-            
+            $this->setCache($behaviorOutput);          
             // SET CACHE FOR JAVASCRIPTS AND CSS FILES AS WELL
-            $this->setCache('return ' . var_export($this->getJavascripts(), true) .';', 'javascripts');
-            $this->setCache('return ' . var_export($this->getStylesheets(), true).';', 'stylesheets');
+            $this->setCache('return ' . ((count($this->getJavascripts()) > 0) ? var_export($this->getJavascripts(), true) : 'array()') .';', 'javascripts');
+            $this->setCache('return ' . ((count($this->getStylesheets()) > 0) ? var_export($this->getStylesheets(), true) : 'array()') .';', 'stylesheets');
         }
         return $behaviorOutput;
     }
@@ -172,6 +180,8 @@ class dmBehaviorsManager extends dmConfigurable {
         if ($this->adminMode) {
             $this->addJavascript('core.behaviorsManagerAdmin');
             $this->addJavascript('lib.json');
+        } else {
+            $this->addJavascript('core.behaviorsManagerRun');
         }
         return $this->javascripts;
     }
@@ -181,11 +191,24 @@ class dmBehaviorsManager extends dmConfigurable {
         return $this;
     }
 
-    public function getStylesheets() {
+    public function getStylesheets() {        
         if (!$this->adminMode && $cache = $this->getCache('stylesheets')) return eval($cache);
         $user = $this->context->getServiceContainer()->getService('user');
-        if ($this->adminMode) $this->addStylesheet (array('core.behaviors'=>null));
-        return $this->stylesheets;
+        if ($this->adminMode) $this->addStylesheet ('core.behaviors');
+        // Convert stylesheets array to sfWebResponse compatible
+        $stylesheets = array();
+        foreach($this->stylesheets as $file => $options)
+        {
+          if(is_int($file) && is_string($options))
+          {
+            $stylesheets[$options] = array();
+          }
+          else
+          {
+            $stylesheets[$file] = $options;
+          }
+        }
+        return $stylesheets;
     }
 
     /**

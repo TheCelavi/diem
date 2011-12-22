@@ -1,4 +1,4 @@
-(function($) {
+;(function($) {
     $.dm.behaviorsManager = {
         /**
          * The list of behaviors that are loaded
@@ -119,8 +119,4 @@
             return path;
         }
     };
-    
-    $.dm.behaviorsManager.init();
-    // If page is currently being edited - behaviors should not run.
-    if (!$('#dm_page').hasClass('edit')) $.dm.behaviorsManager.start();
  })(jQuery);

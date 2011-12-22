@@ -1,4 +1,4 @@
-(function($) {           
+;(function($) {           
     $.dm.behaviorsManager = $.extend($.dm.behaviorsManager, {  
         contextMenuTemplate: null,
         contextMenu: null,
@@ -176,8 +176,17 @@
                     // When settings are loaded, do the magic...
                     self.reloadBehaviorsMenu();
                     self.initializeContextMenu();
+                    self.init();
                     self.enableAddBehaviors();
-                    self.enableEditBehaviors();
+                    self.enableEditBehaviors();                    
+                    // If page is currently being edited - behaviors should not run.
+                    if (!$('#dm_page').hasClass('edit')) {
+                        // In Chrome, something is broken for toggle view button
+                        // THIS IS A HARD FIX!!!
+                        $('a.tipable.edit_toggle').removeClass('s24_view_on').addClass('s24_view_off');
+                        self.start();
+                    }
+                    
                 }
             });
         },
