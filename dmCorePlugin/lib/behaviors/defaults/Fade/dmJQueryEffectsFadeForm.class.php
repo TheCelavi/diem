@@ -47,10 +47,10 @@ class dmJQueryEffectsFadeForm extends dmBehaviorBaseForm {
             'easing' => 'The easing function for animation'
         ));
         
-        if (!$this->getWidgetSchema()->getDefault('event')) $this->getWidgetSchema()->setDefault ('event', 'load');
-        if (!$this->getWidgetSchema()->getDefault('opacity')) $this->getWidgetSchema()->setDefault ('opacity', 50);
-        if (!$this->getWidgetSchema()->getDefault('duration')) $this->getWidgetSchema()->setDefault ('duration', 1000);
-        if (!$this->getWidgetSchema()->getDefault('easing')) $this->getWidgetSchema()->setDefault ('easing', 'jswing');
+        if (!$this->getDefault('event')) $this->setDefault ('event', 'load');
+        if (!$this->getDefault('opacity')) $this->setDefault ('opacity', 50);
+        if (!$this->getDefault('duration')) $this->setDefault ('duration', 1000);
+        if (!$this->getDefault('easing')) $this->setDefault ('easing', 'jswing');
                   
         parent::configure();
     }

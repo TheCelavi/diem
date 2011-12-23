@@ -74,7 +74,7 @@ abstract class dmBehaviorBaseForm extends dmForm {
 
     /**
      * Try to guess default values
-     * from last updated widget with same module.action
+     * from last updated behavior
      * @return array default values
      */
     protected function getDefaultsFromLastUpdated(array $fields = array()) {
@@ -89,14 +89,10 @@ abstract class dmBehaviorBaseForm extends dmForm {
                 ->limit(1)
                 ->select('b.id, bTranslation.dm_behavior_value as value')
                 ->fetchOneArray();
-
-        $defaults = $this->getFirstDefaults();
-
         if (!$lastBehaviorValue) {
-            return $defaults;
+            return array();
         }
-        $defaults = json_decode((string) $lastBehaviorValue['value'], true);
-        return $defaults;
+        return json_decode((string) $lastBehaviorValue['value'], true);        
     }
 
     protected function getFirstDefaults() {
@@ -120,7 +116,9 @@ abstract class dmBehaviorBaseForm extends dmForm {
     public function getDefaults() {
         $defaults = $this->getDefaultsFromLastUpdated();
         if (count($defaults) > 0) return $defaults;
-        else $defaults = parent::getDefaults();
+        $defaults = $this->getFirstDefaults();
+        if (count($defaults) > 0) return $defaults;
+        $defaults = parent::getDefaults();
         unset($defaults['dm_behavior_enabled']);
         return $defaults;
     }

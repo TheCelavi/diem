@@ -95,13 +95,13 @@ class dmTipsyBehaviorForm extends dmBehaviorBaseForm {
             'fade' => 'Use fade animation to display tip?'
         )); 
         
-        if (!$this->getWidgetSchema()->getDefault('inner_target')) $this->getWidgetSchema()->setDefault ('inner_target', 'img');
-        if (!$this->getWidgetSchema()->getDefault('title')) $this->getWidgetSchema()->setDefault ('title', 'title');
-        if (!$this->getWidgetSchema()->getDefault('gravity')) $this->getWidgetSchema()->setDefault ('gravity', 'ans');
-        if (!$this->getWidgetSchema()->getDefault('opacity')) $this->getWidgetSchema()->setDefault ('opacity', 80);        
-        if (!$this->getWidgetSchema()->getDefault('fade')) $this->getWidgetSchema()->setDefault ('fade', true);        
-        if (!$this->getWidgetSchema()->getDefault('delayIn')) $this->getWidgetSchema()->setDefault ('delayIn', 0);
-        if (!$this->getWidgetSchema()->getDefault('delayOut')) $this->getWidgetSchema()->setDefault ('delayOut', 0);
+        if (!$this->getDefault('inner_target')) $this->setDefault ('inner_target', 'img');
+        if (!$this->getDefault('title')) $this->setDefault ('title', 'title');
+        if (!$this->getDefault('gravity')) $this->setDefault ('gravity', 'ans');
+        if (!$this->getDefault('opacity')) $this->setDefault ('opacity', 80);        
+        if (!$this->getDefault('fade')) $this->setDefault ('fade', true);        
+        if (!$this->getDefault('delayIn')) $this->setDefault ('delayIn', 0);
+        if (!$this->getDefault('delayOut')) $this->setDefault ('delayOut', 0);
         
         parent::configure();
     }
