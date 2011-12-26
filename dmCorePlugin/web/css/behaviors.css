@@ -125,3 +125,19 @@ div.dm.dm_behavior_sort.dm_behavior_sort_form li span.move img {
     margin-left: auto;
     margin-top: 5px;
 }
+.dm_behaviors_droppable_hover {
+    background-image: linear-gradient(bottom, #EAF8EA 2%, #E9F7E9 51%, #EAF8EA 76%);
+    background-image: -o-linear-gradient(bottom, #EAF8EA 2%, #E9F7E9 51%, #EAF8EA 76%);
+    background-image: -moz-linear-gradient(bottom, #EAF8EA 2%, #E9F7E9 51%, #EAF8EA 76%);
+    background-image: -webkit-linear-gradient(bottom, #EAF8EA 2%, #E9F7E9 51%, #EAF8EA 76%);
+    background-image: -ms-linear-gradient(bottom, #EAF8EA 2%, #E9F7E9 51%, #EAF8EA 76%);
+
+    background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0.02, #EAF8EA),
+            color-stop(0.51, #E9F7E9),
+            color-stop(0.76, #EAF8EA)
+    );
+}

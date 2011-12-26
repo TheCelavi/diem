@@ -385,7 +385,7 @@
                 drop        :       function(event, ui) {
                     var $icon = $(ui.draggable, '.dm_droppable_behaviors'), $attachable = $(this);
                     if (!$attachable.hasClass('dm_behaviors_attachable')) $attachable = $attachable.closest('.dm_behaviors_attachable');
-                    $attachable.removeClass('droppable_hover');
+                    $attachable.removeClass('dm_behaviors_droppable_hover');
                     if ($icon.length == 0) return;
                     if ($icon.hasClass('clipboard')) {
                         self.pasteBehavior($.extend({},{
@@ -399,12 +399,12 @@
                 over: function(event, ui) {
                     var $attachable = $(this);
                     if (!$attachable.hasClass('dm_behaviors_attachable')) $attachable = $attachable.closest('.dm_behaviors_attachable');
-                    $attachable.addClass('droppable_hover');
+                    $attachable.addClass('dm_behaviors_droppable_hover');
                 },
                 out: function(event, ui) {
                     var $attachable = $(this);
                     if (!$attachable.hasClass('dm_behaviors_attachable')) $attachable = $attachable.closest('.dm_behaviors_attachable');
-                    $attachable.removeClass('droppable_hover');
+                    $attachable.removeClass('dm_behaviors_droppable_hover');
                 }
             });
         },
@@ -790,9 +790,9 @@
                         serialize();
                     }
                 }).disableSelection().find('li').hover(function(){
-                    $(self.getCssXPath($(this).metadata())).addClass('droppable_hover');
+                    $(self.getCssXPath($(this).metadata())).addClass('dm_behaviors_droppable_hover');
                 },function(){
-                    $(self.getCssXPath($(this).metadata())).removeClass('droppable_hover');
+                    $(self.getCssXPath($(this).metadata())).removeClass('dm_behaviors_droppable_hover');
                 }).click(function(){
                     if (self.settings.privileges.edit) self.editBehavior($(this).metadata().dm_behavior_id);
                 });

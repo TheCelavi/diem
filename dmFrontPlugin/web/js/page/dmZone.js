@@ -50,7 +50,7 @@ $.widget('ui.dmZone', {
             data:     {zone_id: zone.getId()},
             success:  function(datas)
             {
-              zone.element.attr('class', 'dm_zone '+ (datas[1] || "").replace(/\./g, ' ')).css('width', datas[0]);
+              zone.element.attr('class', 'dm_zone dm_zone_' + zone.getId() + ' ' + (datas[1] || "").replace(/\./g, ' ')).css('width', datas[0]);
             }
           });
         }, 100);
