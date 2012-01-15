@@ -136,9 +136,9 @@ $.widget('ui.dmZone', {
         {
           ui.placeholder.addClass(ui.item.attr('class')).css('width', ui.item.css('width')).html(ui.item.html());
         }
-        // moj prvi komentar
+        // moj prvi komentar -1
         $('#dm_page div.dm_widgets').addClass('droppable-active');
-
+        // moj drugi komentar -2
         sortEvents = [];
       },
       stop: function(e, ui)
