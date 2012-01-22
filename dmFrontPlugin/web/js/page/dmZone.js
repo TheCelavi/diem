@@ -117,11 +117,14 @@ $.widget('ui.dmZone', {
       forceHelperSize:        false,
       forcePlaceholderSize:   false,
 <<<<<<< HEAD
+<<<<<<< HEAD
       tolerance:              'intersect',
       receive:                function(e, ui) {sortEvents.receive = $(this).parent();},
       remove:                 function(e, ui) {sortEvents.remove = true;},
       update:                 function(e, ui) {sortEvents.update = true;},
 =======
+=======
+>>>>>>> upstream/master
       tolerance:              'pointer',
       receive:                function(e, ui) { sortEvents.receive = $(this).parent(); },
       remove:                 function(e, ui) { sortEvents.remove = true; },
