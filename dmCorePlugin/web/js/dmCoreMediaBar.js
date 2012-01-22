@@ -64,15 +64,12 @@
       if ($.fn.draggable && ($files = $('ul.content > li.file', media.element).orNot())) 
       {
         $files.draggable({
-<<<<<<< HEAD
-          //zIndex: 16777271, // max z-index for Safari 3 - fix for max z index, draggable on top
-=======
           containment: 'document',
           zIndex: 16777271, // max z-index for Safari 3
 >>>>>>> upstream/master
           helper: function()
           {
-            return $('<div class="dm_media_helper file"></div>').maxZIndex().html($(this).html()).appendTo($('body'));
+            return $('<div class="dm_media_helper file"></div>').html($(this).html()).appendTo($('body'));
           },
           revert: 'invalid'
         });

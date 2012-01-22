@@ -35,7 +35,7 @@ $.widget('ui.dmZone', {
     
     var $dialog = $.dm.ctrl.ajaxDialog({
       url:      $.dm.ctrl.getHref('+/dmZone/edit'),
-      data:     {zone_id: zone.getId()},
+      data:     { zone_id: zone.getId() },
       title:    $('#dm_zone_'+zone.getId()+' > a.dm_zone_edit').tipsyTitle(),
       'class':  dialog_class,
       beforeClose:  function()
@@ -47,7 +47,7 @@ $.widget('ui.dmZone', {
           $.ajax({
             dataType: 'json',
             url:      $.dm.ctrl.getHref('+/dmZone/getAttributes'),
-            data:     {zone_id: zone.getId()},
+            data:     { zone_id: zone.getId() },
             success:  function(datas)
             {
               zone.element.attr('class', 'dm_zone dm_zone_' + zone.getId() + ' ' + (datas[1] || "").replace(/\./g, ' ')).css('width', datas[0]);
@@ -116,20 +116,10 @@ $.widget('ui.dmZone', {
       connectWith:            'div.dm_widgets',
       forceHelperSize:        false,
       forcePlaceholderSize:   false,
-<<<<<<< HEAD
-<<<<<<< HEAD
-      tolerance:              'intersect',
-      receive:                function(e, ui) {sortEvents.receive = $(this).parent();},
-      remove:                 function(e, ui) {sortEvents.remove = true;},
-      update:                 function(e, ui) {sortEvents.update = true;},
-=======
-=======
->>>>>>> upstream/master
       tolerance:              'pointer',
       receive:                function(e, ui) { sortEvents.receive = $(this).parent(); },
       remove:                 function(e, ui) { sortEvents.remove = true; },
       update:                 function(e, ui) { sortEvents.update = true; },
->>>>>>> upstream/master
       start:                  function(e, ui)
       {
         ui.item.addClass('dm_dragging');

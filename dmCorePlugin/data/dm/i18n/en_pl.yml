@@ -544,11 +544,7 @@
 "Records Permissions": "Uprawnienia rekordów"
 "Record Permission": "Uprawnienie rekordu"
 "Records Permissions Associations": "Powiązania uprawnień rekordów"
-<<<<<<< HEAD
-"Record Permission Association": "Powiązanie uprawnienia rekordu"
-=======
 "Record Permission Association": "Powiązanie uprawnienia rekordu"
 "Use the tree to the left to drag & drop a page here": "Użyj drzewa po lewej i przeciągnij tutaj stronę"
 "Wildcards are allowed .e.g. /example/url or /example/*": "Gwiazdki są dozwolone, np.: /jakis/url lub /jakis/*"
 "Actions": "Akcje"
->>>>>>> upstream/master
