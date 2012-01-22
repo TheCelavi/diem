@@ -66,7 +66,6 @@
         $files.draggable({
           containment: 'document',
           zIndex: 16777271, // max z-index for Safari 3
->>>>>>> upstream/master
           helper: function()
           {
             return $('<div class="dm_media_helper file"></div>').html($(this).html()).appendTo($('body'));
