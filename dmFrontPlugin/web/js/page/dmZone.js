@@ -116,10 +116,17 @@ $.widget('ui.dmZone', {
       connectWith:            'div.dm_widgets',
       forceHelperSize:        false,
       forcePlaceholderSize:   false,
+<<<<<<< HEAD
       tolerance:              'intersect',
       receive:                function(e, ui) {sortEvents.receive = $(this).parent();},
       remove:                 function(e, ui) {sortEvents.remove = true;},
       update:                 function(e, ui) {sortEvents.update = true;},
+=======
+      tolerance:              'pointer',
+      receive:                function(e, ui) { sortEvents.receive = $(this).parent(); },
+      remove:                 function(e, ui) { sortEvents.remove = true; },
+      update:                 function(e, ui) { sortEvents.update = true; },
+>>>>>>> upstream/master
       start:                  function(e, ui)
       {
         ui.item.addClass('dm_dragging');
