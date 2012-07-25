@@ -108,11 +108,11 @@ class dmBehaviorsManager extends dmConfigurable {
      * @param array $page The Page structure from Page helper
      * @return string
      */
-    public function renderBehaviors($page) {
+    public function renderBehaviors($page, $areas) {
         $canCache = !$this->adminMode; // If it is in admin mode, do not use cached output
         $this->page = $page;
         if ($canCache && $cache = $this->getCache()) return $cache;
-        $behaviors = $this->getBehaviorsForPage($this->page);
+        $behaviors = $this->getBehaviorsForPage($page, $areas);
         $behaviorsSettings = array();
         
         foreach ($behaviors as $behavior) {
@@ -151,11 +151,11 @@ class dmBehaviorsManager extends dmConfigurable {
         return $behaviorOutput;
     }
 
-    private function getBehaviorsForPage($page) {
+    private function getBehaviorsForPage($page, $areas) {
         $query = dmDb::query('DmBehavior b') // THIS IS VERY SLOW SCRIPT AND QUERY, BUT USAGE OF CACHE WILL IN VIEW MODES COMPENSATE....
                 ->withI18n()
-                ->where('b.dm_page_id = ?', array($page['id']));
-        if (isset($page['Areas'])) foreach ($page['Areas'] as $area) {
+                ->where('b.dm_page_id = ?', array($page->getId()));
+        if (isset($areas)) foreach ($areas as $area) {
             $query->orWhere('b.dm_area_id = ?', array($area['id']));
             if (isset($area['Zones'])) foreach($area['Zones'] as $zone) {
                 $query->orWhere('b.dm_zone_id = ?', array($zone['id']));
@@ -193,7 +193,7 @@ class dmBehaviorsManager extends dmConfigurable {
 
     public function getStylesheets() {        
         if (!$this->adminMode && $cache = $this->getCache('stylesheets')) return eval($cache);
-        $user = $this->context->getServiceContainer()->getService('user');
+        //$user = $this->context->getServiceContainer()->getService('user');
         if ($this->adminMode) $this->addStylesheet ('core.behaviors');
         // Convert stylesheets array to sfWebResponse compatible
         $stylesheets = array();
@@ -375,7 +375,9 @@ class dmBehaviorsManager extends dmConfigurable {
 
     protected function generateCacheKey($type) {
         return sprintf(
-                        'behaviors_manager/%s/%s/%s', $type, $this->page['id'], md5(serialize($this->filterCacheVars($this->page)))
+                        'behaviors_manager/%s/%s/%s', $type, $this->page['id'], md5(serialize($this->filterCacheVars(array(
+                            
+                        ))))
         );
     }
 
