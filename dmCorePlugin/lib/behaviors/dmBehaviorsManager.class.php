@@ -169,13 +169,13 @@ class dmBehaviorsManager extends dmConfigurable {
         return $query->execute();
     }   
 
-    protected function addJavascript($keys) {
+    protected function addJavascript($keys) {        
         $this->javascripts = array_merge($this->javascripts, (array) $keys);
         return $this;
     }
 
-    public function getJavascripts() {
-        if (!$this->adminMode && $cache = $this->getCache('javascripts')) return eval($cache);
+    public function getJavascripts() {                
+        if (!$this->adminMode && ($cache = $this->getCache('javascripts'))) return eval($cache);
         $this->addJavascript('core.behaviorsManager');
         if ($this->adminMode) {
             $this->addJavascript('core.behaviorsManagerAdmin');
@@ -192,7 +192,7 @@ class dmBehaviorsManager extends dmConfigurable {
     }
 
     public function getStylesheets() {        
-        if (!$this->adminMode && $cache = $this->getCache('stylesheets')) return eval($cache);
+        if (!$this->adminMode && ($cache = $this->getCache('stylesheets'))) return eval($cache);
         //$user = $this->context->getServiceContainer()->getService('user');
         if ($this->adminMode) $this->addStylesheet ('core.behaviors');
         // Convert stylesheets array to sfWebResponse compatible

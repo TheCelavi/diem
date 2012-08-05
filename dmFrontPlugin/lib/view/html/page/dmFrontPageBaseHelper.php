@@ -496,15 +496,11 @@ abstract class dmFrontPageBaseHelper extends dmConfigurable
          * @return string
          */
         public function renderBehaviors() {            
-            if (is_null($areas = $this->areas)) $areas = $this->getAreas ();
-//            $page = array(
-//                'id' => $this->page->getId(),
-//                'Areas' => $areas
-//            );        
+            if (is_null($areas = $this->areas)) $areas = $this->getAreas ();       
             $behaviorsManager = $this->serviceContainer->getService('behaviors_manager');            
             $output = $behaviorsManager->renderBehaviors($this->page, $areas);                    
             foreach($behaviorsManager->getJavascripts() as $javascript)
-            {                
+            {    
                 $this->serviceContainer->getService('response')->addJavascript($javascript);
             }            
             foreach($behaviorsManager->getStylesheets() as $stylesheet => $options)
