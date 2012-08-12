@@ -345,7 +345,7 @@ abstract class dmFrontPageBaseHelper extends dmConfigurable
 		/*
 		 * Open widget wrap with wrapped user's classes
 		 */
-		$html = '<div class="dm_widget_'.$widget['id'].' '.$widgetWrapClass.'">';
+		$html = '<div class="dm_widget_'.(isset($widget['id'])?$widget['id']:dmString::random(15)).' '.$widgetWrapClass.'">';
 
 		/*
 		 * Open widget inner with user's classes
