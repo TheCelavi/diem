@@ -41,6 +41,7 @@ class dmFrontPageEditHelper extends dmFrontPageBaseHelper
 'dm_area',
 'dm_'.$prefix.'_'.$type,
 'dm_area_'.$area['id'],
+($prefix == 'layout') ? 'dm_layout_shared' : '',
 ($this->behaviorsManager->isAreaAttachable()) ? 'dm_behaviors_attachable' : ''
     ));
     
