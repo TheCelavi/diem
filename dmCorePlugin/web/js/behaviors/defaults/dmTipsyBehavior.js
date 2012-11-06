@@ -1,11 +1,11 @@
-;(function($) {    
-    
-    var methods = {        
-        init: function(behavior) {           
+;(function($) {
+
+    var methods = {
+        init: function(behavior) {
             var $this = $(this), data = $this.data('dmTipsyBehavior'); // Same can be attached if they listend different events
             if (data && behavior.dm_behavior_id != data.dm_behavior_id) { // There is attached the same, so we must report it
                 alert('You can not attach the behavior with same settings to same content'); // TODO TheCelavi - adminsitration mechanizm for this? Reporting error
-            };           
+            };
             $this.data('dmTipsyBehavior', behavior);
         },
         start: function(behavior) {
@@ -18,13 +18,13 @@
         stop: function(behavior) {
             $('body > div.tipsy').remove();
         },
-        destroy: function(behavior) { 
+        destroy: function(behavior) {
             $(this).data('dmTipsyBehavior', null);
         }
     };
-    
+
     $.fn.dmTipsyBehavior = function(method, behavior){
-        
+
         return this.each(function() {
             if ( methods[method] ) {
                 return methods[ method ].apply( this, [behavior]);
@@ -32,12 +32,12 @@
                 return methods.init.apply( this, [method] );
             } else {
                 $.error( 'Method ' +  method + ' does not exist on jQuery.dmTipsyBehavior' );
-            }  
+            };
         });
     };
 
 
-    $.extend($.dm.behaviors, {        
+    $.extend($.dm.behaviors, {
         dmTipsyBehavior: {
             init: function(behavior) {
                 if (behavior.inner_target) {
@@ -69,5 +69,5 @@
             }
         }
     });
-    
+
 })(jQuery);

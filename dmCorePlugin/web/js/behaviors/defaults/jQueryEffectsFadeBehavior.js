@@ -1,8 +1,8 @@
-;(function($) {    
-    
-    var methods = {        
+;(function($) {
+
+    var methods = {
         init: function(behavior) {
-            var dataNamespace = 'jQueryEffectsFadeBehavior' + behavior.event;            
+            var dataNamespace = 'jQueryEffectsFadeBehavior' + behavior.event;
             var $this = $(this), data = $this.data(dataNamespace); // Same can be attached if they listend different events
             if (data && behavior.dm_behavior_id != data.dm_behavior_id) { // There is attached the same, so we must report it
                 alert('You can not attach the behavior with same settings to same content'); // TODO TheCelavi - adminsitration mechanizm for this? Reporting error
@@ -11,7 +11,7 @@
             if (!$this.data('jQueryEffectsFadeBehaviorStartOpacity')) $this.data('jQueryEffectsFadeBehaviorStartOpacity', $this.css('opacity'));
             $this.data(dataNamespace, behavior);
         },
-        start: function(behavior) {            
+        start: function(behavior) {
             var $this = $(this);
             if (behavior.event == 'load') {
                 methods.animate.apply($this, [behavior]);
@@ -29,7 +29,7 @@
             $this.css('opacity', $this.data('jQueryEffectsFadeBehaviorStartOpacity'));
         },
         destroy: function(behavior) {
-            var dataNamespace = 'jQueryEffectsFadeBehavior' + behavior.event; 
+            var dataNamespace = 'jQueryEffectsFadeBehavior' + behavior.event;
             var $this = $(this);
             $this.data(dataNamespace, null);
         },
@@ -39,9 +39,9 @@
             }, behavior.duration, behavior.easing);
         }
     };
-    
+
     $.fn.jQueryEffectsFadeBehavior = function(method, behavior){
-        
+
         return this.each(function() {
             if ( methods[method] ) {
                 return methods[ method ].apply( this, [behavior]);
@@ -49,15 +49,15 @@
                 return methods.init.apply( this, [method] );
             } else {
                 $.error( 'Method ' +  method + ' does not exist on jQuery.jQueryEffectsFadeBehavior' );
-            }  
+            };
         });
     };
-    
+
     // Entry point for initialization of behavior
     // This one is tricky, since same behavior can be attached several times with different settings
     // The difference is event
     // So we will use that to figure out are several attached behaviors are legitime
-    $.extend($.dm.behaviors, {        
+    $.extend($.dm.behaviors, {
         jQueryEffectsFadeBehavior: {
             init: function(behavior) {
                 $($.dm.behaviorsManager.getCssXPath(behavior) + ' ' + behavior.inner_target).jQueryEffectsFadeBehavior('init', behavior);
@@ -73,5 +73,5 @@
             }
         }
     });
-    
+
 })(jQuery);
