@@ -1,6 +1,7 @@
 <?php
 
 require_once ##DIEM_CORE_STARTER##;
+require_once 'dmLoadPluginsConfiguration.class.php';
 dm::start();
 
 class ProjectConfiguration extends dmProjectConfiguration
@@ -10,9 +11,7 @@ class ProjectConfiguration extends dmProjectConfiguration
   {
     parent::setup();
     
-    $this->enablePlugins(array(
-      // add plugins you want to enable here
-    ));
+    $this->enablePlugins(dmLoadPluginsConfiguration::getPlugins());
 
     $this->setWebDir(##DIEM_WEB_DIR##);
   }
