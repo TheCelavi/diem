@@ -3,18 +3,16 @@
 }
 
 #dm_page.edit .dm_widget .dm_widget_inner {
-  border: 2px groove #D3D3D3;
-  border-radius: 0 4px 4px 4px;
-  -moz-border-radius: 0 4px 4px 4px;
-  -webkit-border-radius: 0 4px 4px 4px;
+  outline: 2px groove #D3D3D3;
 }
 
 #dm_page.edit .dm_widget:hover > .dm_widget_inner {
-  border-color: #a6edcd;
+  outline-color: #a6edcd;
 }
 
 #dm_page .dm_widget > .dm_widget_edit {
   margin-top: 3px;
+  margin-left: 0px;
   background: url(../images/zone_widget_sprite.png) no-repeat;
   width: 64px;
   height: 19px;
