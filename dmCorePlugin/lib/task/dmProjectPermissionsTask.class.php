@@ -45,13 +45,17 @@ EOF;
     $this->logSection('diem', 'Check file permissions');
     parent::execute();
     
+    $this->chmod(dmOs::join(sfConfig::get('sf_web_dir'), 'cache'), 0777); 
+    
     $this->current = null;
     $this->failed  = array();
     
     $dirs = array(
       sfConfig::get('sf_apps_dir'),
       sfConfig::get('sf_lib_dir'),
-      sfConfig::get('sf_data_dir')
+      sfConfig::get('sf_data_dir'),
+      sfConfig::get('sf_data_dir'),
+      dmOs::join(sfConfig::get('sf_web_dir'), 'cache')
     );
 
     $dirFinder = sfFinder::type('dir');
