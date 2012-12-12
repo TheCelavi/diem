@@ -113,5 +113,16 @@ class dmPageActions extends dmFrontBaseActions
       'html' => $this->getPartial('dmPage/new')
     ), true);
   }
-  
+  /**
+   * Renders a page based on DmPage ID
+   * @param dmWebRequest $request
+   */
+  public function executeOpenPageById(dmWebRequest $request)
+  {
+      $this->forward404Unless(
+        $page = dmDb::table('DmPage')->findOneById($request->getParameter('id'))
+      );
+      $this->redirect('/'.$page->getSlug());
+      $request->getParameterHolder()->set('slug', $page->getSlug());
+  }
 }

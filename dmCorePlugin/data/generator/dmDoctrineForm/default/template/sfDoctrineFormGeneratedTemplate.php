@@ -52,7 +52,11 @@ abstract class Base<?php echo $this->modelName ?>Form extends <?php echo $this->
 <?php foreach ($this->getOneToOneRelations() as $relation): ?><?php if($relation['alias'] === 'Translation') continue;?>
 		//one to one
 		if($this->needsWidget('<?php echo $this->underscore($relation['local']) ?>')){
+<?php if ($relation['class'] == 'DmPage'): ?>            
+            $this->setWidget('<?php echo $this->underscore($relation['local']) ?>', new <?php echo $this->getWidgetClassForColumn($relation instanceof Doctrine_Relation_LocalKey ? $relation : new dmDoctrineColumn($relation['local'], $relation['table'])) ?>(array()));
+<?php else: ?>
 			$this->setWidget('<?php echo $this->underscore($relation['local']) ?>', new <?php echo $this->getWidgetClassForColumn($relation instanceof Doctrine_Relation_LocalKey ? $relation : new dmDoctrineColumn($relation['local'], $relation['table'])) ?>(array('multiple' => false, 'model' => '<?php echo $relation['table']->getOption('name')?>', 'expanded' => <?php echo $this->table->isPaginatedColumn($relation['local']) ? 'true' : 'false'?>)));
+<?php endif; ?>
 			$this->setValidator('<?php echo $this->underscore($relation['local']) ?>', new sfValidatorDoctrineChoice(array('multiple' => false, 'model' => '<?php echo $relation['table']->getOption('name')?>', 'required' => <?php echo $this->table->getSfDoctrineColumn($relation['local'])->isNotNull() ? 'true' : 'false'?>)));
 		}
 <?php endforeach; ?>
@@ -100,7 +104,7 @@ abstract class Base<?php echo $this->modelName ?>Form extends <?php echo $this->
 
     $this->setupInheritance();
 
-    parent::setup();
+    // parent::setup(); <- seeams like someone forgot this to remove
     
     // Unset automatic fields like 'created_at', 'updated_at', 'position'
     // override this method in your form to keep them

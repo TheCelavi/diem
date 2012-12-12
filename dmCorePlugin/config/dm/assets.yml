@@ -75,6 +75,10 @@ js:
     json:             json/jquery.json-2.3.min
     easing:           easing/jquery.easing.1.3.min
     fancybox:         fancybox/jquery.fancybox.min
+    
+    # Symfony Form Widgets Section
+    sfWidgetFormDmPageLink: symfony/widgets/sfWidgetFormDmPageLink/js/sfWidgetFormDmPageLink
+    
 css:
 
   core:
@@ -107,3 +111,7 @@ css:
     tipsy:            tipsy/stylesheets/tipsy
     colorbox:         colorbox/theme3/colorbox
     fancybox:         fancybox/jquery.fancybox
+    
+    # Symfony Form Widgets Section
+    sfWidgetFormDmPageLink: symfony/widgets/sfWidgetFormDmPageLink/css/sfWidgetFormDmPageLink
+    

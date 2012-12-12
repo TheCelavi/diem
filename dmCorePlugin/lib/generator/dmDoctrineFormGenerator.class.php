@@ -219,7 +219,7 @@ class dmDoctrineFormGenerator extends sfDoctrineFormGenerator
 		  if($this->table->isPaginatedColumn($column instanceof sfDoctrineColumn ? $column->getName() : $column['local']))
 		  {
 		    $widgetSubclass = 'DmPaginatedDoctrineChoice';
-		  }else{
+		  }else{              
 			  $widgetSubclass = 'DmDoctrineChoice';
 		  }
 		}
@@ -228,8 +228,12 @@ class dmDoctrineFormGenerator extends sfDoctrineFormGenerator
 		//thanks to Yoann BRIEUX
 		if($column instanceof Doctrine_Relation_LocalKey)
 		{
-			$column = new sfDoctrineColumn($column['local'], $this->table);
+			$column = new sfDoctrineColumn($column['local'], $this->table);            
 		}
+        if ($column->isForeignKey() && $column->getForeignClassName() == 'DmPage') {
+            $widgetSubclass = 'DmPageLink';
+        }
+        
 		$widgetSubclass = $this->getGeneratorManager()->getConfiguration()->getEventDispatcher()->filter(
 		new sfEvent($this, 'dm.form_generator.widget_subclass', array('column' => $column)),
 		$widgetSubclass
@@ -538,7 +542,7 @@ class dmDoctrineFormGenerator extends sfDoctrineFormGenerator
 	 */
 	public function getWidgetOptionsForColumn($column)
 	{
-		$options = array();
+		$options = array();        
 
 		if ($column->isForeignKey())
 		{
