@@ -41,4 +41,13 @@ dev:
     compress: false
   css:
     compress: false
+  less:
+    local:                # configuration for local LESS files
+      compiler:           server        # Where the compailing proces take place - on 'server', or on 'client' via less.js?            
+      cache:              false         # If server compiler is used, should output be cached? True is recommended for production enviroment
+      error_fail_safe:    false         # If server fails to compile, should compaling be executed on client via less.js? True is recommended for production enviroment.
+    remote:               # configuration for remote LESS files (CDN and other resources) - not recommended usage
+      compiler:           server        # Where the compailing proces take place - on 'server', or on 'client' via less.js?      
+      cache:              false         # If server compiler is used, should output be cached? True is recommended for production enviroment
+      error_fail_safe:    false         # If server fails to compile, should compaling be executed on client via less.js? True is recommended for production enviroment.
 

@@ -18,6 +18,16 @@ default:
     
   css:
     compress:             true          # (RECOMMENDED) Performance : Minifies stylesheets and put them into a single compressed file
+  
+  less:
+    local:                # configuration for local LESS files
+      compiler:           server        # Where the compailing proces take place - on 'server', or on 'client' via less.js?            
+      cache:              true          # If server compiler is used, should output be cached? True is recommended for production enviroment
+      error_fail_safe:    true          # If server fails to compile, should compaling be executed on client via less.js? True is recommended for production enviroment.
+    remote:               # configuration for remote LESS files (CDN and other resources) - not recommended usage
+      compiler:           server        # Where the compailing proces take place - on 'server', or on 'client' via less.js?      
+      cache:              true          # If server compiler is used, should output be cached? True is recommended for production enviroment
+      error_fail_safe:    true          # If server fails to compile, should compaling be executed on client via less.js? True is recommended for production enviroment.
     
   seo:                                  # Search engine optimization configuration
     use_keywords:         true          # Keywords are useless for seo, but you can use them if you want

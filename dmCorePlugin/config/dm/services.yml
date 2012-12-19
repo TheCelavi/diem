@@ -216,6 +216,11 @@ parameters:
     zone_attachable:  true
     widget_attachable:  true
   
+  less_compiler.class:    dmLessCompiler    # Responsible for managing behaviors
+  less_compiler.options:
+    adapter:  dmLessAdapterPHP
+    cache_dir: cache
+  
 services:
 
   text_diff:
@@ -528,3 +533,8 @@ services:
     class:                    %behaviors_manager.class%
     shared:                   true
     arguments:                [@context, %behaviors_manager.options%]
+  
+  less_compiler:
+    class:                    %less_compiler.class%
+    shared:                   true
+    arguments:                [%less_compiler.options%]

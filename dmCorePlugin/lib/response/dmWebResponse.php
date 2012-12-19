@@ -9,7 +9,8 @@ class dmWebResponse extends sfWebResponse
   $javascriptConfig,
   $culture,
   $theme,
-  $xmlns;
+  $xmlns,
+  $lessCompiler;
   
   public function initialize(sfEventDispatcher $dispatcher, $options = array())
   {
@@ -183,6 +184,47 @@ class dmWebResponse extends sfWebResponse
     
     return $path;
   }
+  
+  public function calculateCSSPathFromLess($asset) { 
+      $path = $this->calculateAssetPath('css', $asset);
+      $isRemote = false;
+      // Remove ending .css if exists...
+      if (substr($path, -4) === '.css') {
+          $path = substr($path, 0, strlen($path) - 4);
+      }
+      // Load configuration
+      if (strpos($path, 'http://') === 0 || 0 === strncmp($path, 'https://', 8)) {
+          $config = sfConfig::get('dm_less_remote');
+          $isRemote = true;
+      } else {
+          $config = sfConfig::get('dm_less_local');
+      }
+      // Where do compailing takes place?
+      if ($config['compiler'] == 'client') {
+          $this->addJavascript('lib.less');
+          return $path;
+      }
+      // Load from cache
+      if ($config['cache'] && $this->getLessCompiler()->hasCache($path)) {
+          return $this->getLessCompiler()->getCache($path, dmLessCompiler::DM_LESS_COMPILER_IO_TYPE_FILE);
+      }
+      // Compile
+      try {
+        return $this->getLessCompiler()->compile(
+            $path,
+            (($isRemote) ? dmLessCompiler::DM_LESS_COMPILER_IO_TYPE_REMOTE : dmLessCompiler::DM_LESS_COMPILER_IO_TYPE_FILE)
+        );
+      } catch (Exception $e) {
+          if ($config['error_fail_safe']) {
+              $this->addJavascript('lib.less');
+              return $path;
+          }
+      }
+  }
+  
+  public function calculateCSSPathFromSass($asset) {
+      throw new dmException('The support for SASS is not implemented jet');
+  }
 
   /**
    * Adds javascript code to the current web response.
@@ -227,8 +269,15 @@ class dmWebResponse extends sfWebResponse
     }
     
     $this->validatePosition($position);
-    
-    $file = $this->calculateAssetPath('css', $asset);
+    if (substr($asset, -5) == '.less') { // If it is a LESS or SASS file, we do callculation diferently
+        $file = $this->calculateCSSPathFromLess($asset);
+    } elseif (substr($asset, -5) == '.sass') {
+        $file = $this->calculateCSSPathFromSass($asset);
+    } elseif (substr($asset, -5) == '.scss') {
+        $file = $this->calculateCSSPathFromSass($asset);    
+    } else {
+        $file = $this->calculateAssetPath('css', $asset);
+    }
 
     $this->stylesheets[$position][$file] = $options;
 
@@ -316,6 +365,15 @@ class dmWebResponse extends sfWebResponse
   
   public function getAllXmlNs() {
       return $this->xmlns;
+  }
+  
+  public function getLessCompiler() {
+      if ($this->lessCompiler) {
+          return $this->lessCompiler;
+      } else {
+          $this->lessCompiler = dmContext::getInstance()->getServiceContainer()->getService('less_compiler');
+          return $this->lessCompiler;
+      }
   }
   
 }

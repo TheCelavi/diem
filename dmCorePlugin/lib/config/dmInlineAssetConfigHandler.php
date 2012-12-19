@@ -64,19 +64,33 @@ class dmInlineAssetConfigHandler extends dmInlineConfigHandler
             $path = '/'.dmString::str_replace_once('.', '/'.$type.'/', $asset).'.js';
         }
         break;
-      case 'css':
+      case 'css':        
+        
+        $ext = '.css';
+        $check_preprocesor = substr(strtolower($asset), -5);
+        if (
+            $check_preprocesor == '.less' 
+            || 
+            $check_preprocesor == '.scss' 
+            || 
+            $check_preprocesor == '.sass'
+        ) 
+        {
+            $ext = '';
+        }
+        
         switch($package)
         {
           case 'core':
-            $path = '/'.sfConfig::get('dm_core_asset').'/css/'.$name.'.css'; break;
+            $path = '/'.sfConfig::get('dm_core_asset').'/css/'.$name.$ext; break;
           case 'lib':
-            $path = '/'.sfConfig::get('dm_core_asset').'/lib/'.$name.'.css'; break;
+            $path = '/'.sfConfig::get('dm_core_asset').'/lib/'.$name.$ext; break;
           case 'front':
-            $path = '/'.sfConfig::get('dm_front_asset').'/css/'.$name.'.css'; break;
+            $path = '/'.sfConfig::get('dm_front_asset').'/css/'.$name.$ext; break;
           case 'admin':
-            $path = '/'.sfConfig::get('dm_admin_asset').'/css/'.$name.'.css'; break;
+            $path = '/'.sfConfig::get('dm_admin_asset').'/css/'.$name.$ext; break;
           default:
-            $path = '/'.dmString::str_replace_once('.', '/'.$type.'/', $asset).'.css';
+            $path = '/'.dmString::str_replace_once('.', '/'.$type.'/', $asset).$ext;
         }
         break;
       default:
