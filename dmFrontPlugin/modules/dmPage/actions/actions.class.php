@@ -74,7 +74,7 @@ class dmPageActions extends dmFrontBaseActions
       $this->page = $this->getPage(),
       'no current DmPage'
     );
-    
+   
     $this->form = new DmPageFrontNewForm();
     
     $this->form->removeCsrfProtection();

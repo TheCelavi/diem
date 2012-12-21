@@ -97,9 +97,6 @@ abstract class dmFormDoctrine extends sfFormDoctrine
 	 */
 	protected function updateNestedSetWidget(dmDoctrineTable $table, $fieldName = null, $label = null)
 	{
-        if ($this->widgetSchema[$fieldName] instanceof sfWidgetFormDmPageLink) {
-            return $this;
-        }
 		if ($table->isNestedSet())
 		{
 			if (null === $fieldName)

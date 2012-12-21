@@ -229,10 +229,7 @@ class dmDoctrineFormGenerator extends sfDoctrineFormGenerator
 		if($column instanceof Doctrine_Relation_LocalKey)
 		{
 			$column = new sfDoctrineColumn($column['local'], $this->table);            
-		}
-        if ($column->isForeignKey() && $column->getForeignClassName() == 'DmPage') {
-            $widgetSubclass = 'DmPageLink';
-        }
+		}        
         
 		$widgetSubclass = $this->getGeneratorManager()->getConfiguration()->getEventDispatcher()->filter(
 		new sfEvent($this, 'dm.form_generator.widget_subclass', array('column' => $column)),
