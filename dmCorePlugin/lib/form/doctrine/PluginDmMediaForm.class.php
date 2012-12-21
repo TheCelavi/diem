@@ -163,8 +163,8 @@ abstract class PluginDmMediaForm extends BaseDmMediaForm
 	
     public function checkFile($validator, $values) 
     {
-        if (trim($values['id']) == '' && trim($values['file']) == '' && $this->isFileRequired()) {
-            throw new sfValidatorError($validator, 'The file is required');
+        if (trim($values['id']) == '' && empty($values['file']) && $this->isFileRequired()) {
+            throw new sfValidatorError($validator, 'The file is required.');
         }
         return $values;
     }

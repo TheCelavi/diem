@@ -108,7 +108,7 @@ class BasedmMediaLibraryActions extends dmAdminBaseActions
     }
     
     if ($request->isMethod('post') && $form->bindAndValid($request))
-    {
+    {      
       $redirect = $form->getValue('file') || $media->dm_media_folder_id != $form->getValue('dm_media_folder_id');
 
       $media = $form->save();
