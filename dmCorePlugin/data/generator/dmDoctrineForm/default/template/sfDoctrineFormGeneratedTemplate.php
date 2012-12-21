@@ -104,7 +104,7 @@ abstract class Base<?php echo $this->modelName ?>Form extends <?php echo $this->
 
     $this->setupInheritance();
 
-    // parent::setup(); <- seeams like someone forgot this to remove
+    parent::setup();
     
     // Unset automatic fields like 'created_at', 'updated_at', 'position'
     // override this method in your form to keep them

@@ -266,17 +266,15 @@ class dmWebResponse extends sfWebResponse
     if(!$this->isHtmlForHuman)
     {
       return $this;
-    }
-    
+    }    
     $this->validatePosition($position);
-    if (substr($asset, -5) == '.less') { // If it is a LESS or SASS file, we do callculation diferently
-        $file = $this->calculateCSSPathFromLess($asset);
-    } elseif (substr($asset, -5) == '.sass') {
+    $file = $this->calculateAssetPath('css', $asset);
+    if (substr($file, -5) == '.less') { // If it is a LESS or SASS file, we do callculation diferently
+        $file = $this->calculateCSSPathFromLess($asset);        
+    } elseif (substr($file, -5) == '.sass') {
         $file = $this->calculateCSSPathFromSass($asset);
-    } elseif (substr($asset, -5) == '.scss') {
+    } elseif (substr($file, -5) == '.scss') {
         $file = $this->calculateCSSPathFromSass($asset);    
-    } else {
-        $file = $this->calculateAssetPath('css', $asset);
     }
 
     $this->stylesheets[$position][$file] = $options;
