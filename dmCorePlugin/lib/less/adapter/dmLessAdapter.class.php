@@ -10,6 +10,6 @@ abstract class dmLessAdapter
      * @return string CSS code
      * @throws dmInvalidLessException
      */
-    abstract public function compile($less);
+    abstract public function compile($less, array $importDirs = array());
 }
 

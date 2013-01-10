@@ -106,12 +106,13 @@
     // Added behaviors support - JavaScript files and Stylesheets are loaded via JSON as object
     dmExtractEncodedAssets: function(data)
     {
+      var $encodedAssetsDiv;
       if($encodedAssetsDiv = this.find('div.dm_encoded_assets').orNot() || data)
       {
         if (!data) { // It is loaded via HTML
-            data = jQuery.parseJSON($encodedAssetsDiv.html());
+            data = jQuery.parseJSON($encodedAssetsDiv.html());            
             $encodedAssetsDiv.remove();
-        }
+        }        
 
         for (i in data.css)
         {

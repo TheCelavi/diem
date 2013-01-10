@@ -15,9 +15,10 @@ class dmLessAdapterPHP extends dmLessAdapter
      * @return string CSS code
      * @throws dmInvalidLessException
      */
-    public function compile($less)
+    public function compile($less, array $importDirs = array())
     {
         $lessCompiler = new lessc();
+        $lessCompiler->setImportDir($importDirs);
         try {
             return $lessCompiler->compile($less);
         } catch (Exception $e) {

@@ -62,15 +62,18 @@ class dmLessCompiler extends dmConfigurable
         switch ($inputType) {
             case dmLessCompiler::DM_LESS_COMPILER_IO_TYPE_FILE: 
                 $source = $this->loadLocalCode($key);
+                $importDirs = $this->getImportDirs($key);
+                $compiled = $this->getAdapter()->compile($source, $importDirs);
                 break;
             case dmLessCompiler::DM_LESS_COMPILER_IO_TYPE_REMOTE:
                 $source = $this->loadRemoteCode($key);
+                $compiled = $this->getAdapter()->compile($source); 
                 break;
             case dmLessCompiler::DM_LESS_COMPILER_IO_TYPE_CODE:
                 $source = $code;
+                $compiled = $this->getAdapter()->compile($source); 
                 break;
         }        
-        $compiled = $this->getAdapter()->compile($source);        
         // Cache it
         $this->setOutput($key, $compiled);
         // Return result
@@ -106,8 +109,17 @@ class dmLessCompiler extends dmConfigurable
         }
         if (!($code = file_get_contents($src))) {
             throw new dmLessIOException(sprintf('LESS file content on path "%s" can not be read.', $src));
-        }
-        return $code;
+        } else {
+            return $code;
+        }       
+    }
+
+    protected function getImportDirs($src) {
+        // TODO Improve for several different dirs...
+        if (!file_exists($src)) {
+            $src = dmOs::join(sfConfig::get('sf_web_dir'), $src);
+        }        
+        return array(dirname($src));
     }
 
     protected function setOutput($key, $code)

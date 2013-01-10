@@ -27,8 +27,14 @@
 
   public function executeShowFilters(sfWebRequest $request)
   {
-    return $this->renderPartial('filters', array(
-      'configuration' => $this->configuration,
-      'form' => $this->configuration->getFilterForm($this->getFilters())
-    ));
+    $helper = $this->getService('helper');
+    $form = $this->configuration->getFilterForm($this->getFilters());
+    return $this->renderAsync(array(
+        'html' => $helper->renderPartial($this->getModuleName(), 'filters', array(
+                        'configuration' => $this->configuration,
+                        'form' => $form
+                    )),
+         'js' => $form->getJavascripts(),
+         'css' => $form->getStylesheets()
+    ), true);
   }

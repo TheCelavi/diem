@@ -185,13 +185,8 @@ class dmWebResponse extends sfWebResponse
     return $path;
   }
   
-  public function calculateCSSPathFromLess($asset) { 
-      $path = $this->calculateAssetPath('css', $asset);
+  public function calculateCSSPathFromLess($path) { 
       $isRemote = false;
-      // Remove ending .css if exists...
-      if (substr($path, -4) === '.css') {
-          $path = substr($path, 0, strlen($path) - 4);
-      }
       // Load configuration
       if (strpos($path, 'http://') === 0 || 0 === strncmp($path, 'https://', 8)) {
           $config = sfConfig::get('dm_less_remote');
@@ -208,12 +203,12 @@ class dmWebResponse extends sfWebResponse
       if ($config['cache'] && $this->getLessCompiler()->hasCache($path)) {
           return $this->getLessCompiler()->getCache($path, dmLessCompiler::DM_LESS_COMPILER_IO_TYPE_FILE);
       }
-      // Compile
+      // Compile      
       try {
         return $this->getLessCompiler()->compile(
             $path,
             (($isRemote) ? dmLessCompiler::DM_LESS_COMPILER_IO_TYPE_REMOTE : dmLessCompiler::DM_LESS_COMPILER_IO_TYPE_FILE)
-        );
+        );        
       } catch (Exception $e) {
           if ($config['error_fail_safe']) {
               $this->addJavascript('lib.less');
@@ -270,11 +265,11 @@ class dmWebResponse extends sfWebResponse
     $this->validatePosition($position);
     $file = $this->calculateAssetPath('css', $asset);
     if (substr($file, -5) == '.less') { // If it is a LESS or SASS file, we do callculation diferently
-        $file = $this->calculateCSSPathFromLess($asset);        
+        $file = $this->calculateCSSPathFromLess($file);        
     } elseif (substr($file, -5) == '.sass') {
-        $file = $this->calculateCSSPathFromSass($asset);
+        $file = $this->calculateCSSPathFromSass($file);
     } elseif (substr($file, -5) == '.scss') {
-        $file = $this->calculateCSSPathFromSass($asset);    
+        $file = $this->calculateCSSPathFromSass($file);    
     }
 
     $this->stylesheets[$position][$file] = $options;

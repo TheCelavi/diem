@@ -56,8 +56,9 @@
       })
       .bind('mouseover', function()
       {
-        !$box.hasClass('loaded') && $box.addClass('loaded').load($box.attr('data-load-url'), function()
-        {
+        !$box.hasClass('loaded') && $box.addClass('loaded').load($box.attr('data-load-url'), function(data)
+        {   
+            $box.dmExtractEncodedAssets();
         });
       });
     },

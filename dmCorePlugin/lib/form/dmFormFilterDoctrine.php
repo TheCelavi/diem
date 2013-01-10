@@ -186,7 +186,19 @@ abstract class dmFormFilterDoctrine extends sfFormFilterDoctrine
   {
     if(is_array($values))
     {
-      parent::addDateQuery($query, $field, $values);
+      $fieldName = $this->getFieldName($field);
+      if (isset($values['is_empty']) && $values['is_empty']) {
+        $query->addWhere(sprintf('%s.%s IS NULL', $query->getRootAlias($query, $fieldName), $fieldName));
+      } else {
+        if (null !== $values['from'] && null !== $values['to']) {
+          $query->andWhere(sprintf('%s.%s >= ?', $this->getRootAlias($query, $fieldName), $fieldName), $values['from']);
+          $query->andWhere(sprintf('%s.%s <= ?', $this->getRootAlias($query, $fieldName), $fieldName), $values['to']);
+        } else if (null !== $values['from']) {
+          $query->andWhere(sprintf('%s.%s >= ?', $this->getRootAlias($query, $fieldName), $fieldName), $values['from']);
+        } else if (null !== $values['to']) {
+          $query->andWhere(sprintf('%s.%s <= ?', $this->getRootAlias($query, $fieldName), $fieldName), $values['to']);
+        }
+      }
     }
     else
     {
