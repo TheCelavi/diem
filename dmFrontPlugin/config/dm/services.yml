@@ -72,6 +72,8 @@ parameters:
   helper_extension.class:     dmFrontHelperExtension # Adds methods to the helper service
 
   tool_bar_view.class:        dmFrontToolBarView    # Renders the front toolbar
+  
+  page_cache.class:           dmPageCache           # Caches pages into single file
 
 services:
 
@@ -192,3 +194,8 @@ services:
     class:                    %helper_extension.class%
     shared:                   true
     arguments:                [ @dispatcher, @service_container ]
+
+  page_cache:
+    class:                    %page_cache.class%
+    shared:                   true
+    arguments:                [ @context, @dispatcher, @filesystem ]

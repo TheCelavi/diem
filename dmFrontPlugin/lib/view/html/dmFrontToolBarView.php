@@ -7,6 +7,7 @@ class dmFrontToolBarView extends dmToolBarView
     return
     $this->helper->open('div#dm_tool_bar.dm.clearfix.'.sfConfig::get('dm_toolBar_flavour', 'blue')).
     $this->renderClearCache().
+    $this->renderClearPageCache().
     $this->renderCodeEditor().
     $this->renderCultureSelect().
     $this->renderThemeSelect().
@@ -29,6 +30,18 @@ class dmFrontToolBarView extends dmToolBarView
       ->text('')
       ->title($this->i18n->__('Update project'))
       ->set('.tipable.dm_refresh_link.widget16.s16block.s16_clear');
+    }
+  }
+  
+  protected function renderClearPageCache()
+  {
+    if ($this->user->can('clear_cache'))
+    {
+      return $this->helper->link('+/dmCore/clearPageCache')
+      ->param('cache', md5($_SERVER['PATH_INFO']))
+      ->text('')
+      ->title($this->i18n->__('Clear page cache'))
+      ->set('.tipable.dm_clear_cache_link.widget16.s16block.s16_delete');
     }
   }
 

@@ -61,7 +61,7 @@ class BasedmUserAdminActions extends autodmUserAdminActions
       
       if ($this->form->isValid())
       {
-        $this->getUser()->signin($this->form->getValue('user'), $this->form->getValue('remember'));
+        $this->getUser()->signin($this->form->getValue('user'), $this->form->getValue('remember'));        
 
         if ($this->getUser()->can('admin'))
         {

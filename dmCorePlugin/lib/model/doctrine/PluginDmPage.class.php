@@ -359,4 +359,13 @@ LIMIT 1')->getStatement();
     
     return $filesystem->getLastExec('output');
   }
+  
+  /**
+   * Is page Signin page?
+   * @return boolean
+   */
+  public function isSignin()
+  {
+    return; ($this->getModule() == 'main' && $this->getAction() == 'signin');
+  }
 }

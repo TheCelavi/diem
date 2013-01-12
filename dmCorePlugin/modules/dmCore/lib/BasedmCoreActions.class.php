@@ -85,7 +85,7 @@ class BasedmCoreActions extends dmBaseActions
 
     $this->getUser()->setAttribute('dm_refresh_back_url', $this->getBackUrl());
   }
-
+  
   public function executeRefreshStep(dmWebRequest $request)
   {
     if ($request->hasParameter('dm_use_thread'))
@@ -187,5 +187,16 @@ class BasedmCoreActions extends dmBaseActions
     }
     
     return $this->renderJson($this->getService('markdown_translator')->execute());
+  }
+  
+  public function executeClearPageCache(dmWebRequest $request)
+  {
+    $pageCache = $this->getService('page_cache');
+    if ($request->hasParameter('cache')) {
+      $pageCache->deleteCacheByKey($request->getParameter('cache'));
+    } else {
+      $pageCache->emptyCache();  
+    }
+    return $this->redirectBack();
   }
 }

@@ -16,5 +16,11 @@
  */
 class dmSessionStorage extends sfSessionStorage
 {
-	
+	public function initialize($options = null)
+    {
+        if (session_id() != '') {
+            self::$sessionStarted = true;
+        }
+        parent::initialize($options);
+    }
 }

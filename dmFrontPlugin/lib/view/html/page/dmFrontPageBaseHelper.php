@@ -345,17 +345,27 @@ abstract class dmFrontPageBaseHelper extends dmConfigurable
 		/*
 		 * Open widget wrap with wrapped user's classes
 		 */
-		$html = '<div class="dm_widget_'.(isset($widget['id'])?$widget['id']:dmString::random(15)).' '.$widgetWrapClass.'">';
+        $renderer = $this->serviceContainer
+                ->setParameter('widget_renderer.widget', $widget)
+                ->getService('widget_renderer');
+        $widgetHTML = $this->renderWidgetInner($widget, $renderer);
+        
+        $idTag = '';
+        if ($widget['id']) {
+            $idTag = 'id="dm_widget_' . $widget['id'] .'"';
+        }
+        
+		$html = '<div ' . $idTag . ' class="dm_widget_'.(isset($widget['id'])?$widget['id']:dmString::random(15)).' '.$widgetWrapClass.'">';
 
 		/*
 		 * Open widget inner with user's classes
 		 */
-		$html .= '<div class="'.$widgetInnerClass.'">';
+		$html .= '<div class="' . (($renderer->isWidgetCacheable()) ? 'dm_widget_cacheable ': '') .$widgetInnerClass.'">';
 
 		/*
 		 * get widget inner content
 		 */
-		$html .= $this->renderWidgetInner($widget);
+		$html .= $widgetHTML;
 
 		/*
 		 * Close widget inner
@@ -391,13 +401,18 @@ abstract class dmFrontPageBaseHelper extends dmConfigurable
 		}
 	}
 
-	public function renderWidgetInner(array $widget)
+	public function renderWidgetInner(array $widget, $renderer = null)
 	{
 		try
 		{
-			$renderer = $this->serviceContainer
-			->setParameter('widget_renderer.widget', $widget)
-			->getService('widget_renderer');
+            if (isset($widget['widget_id'])) {
+                $widget = dmDb::table('DmWidget')->findOneByIdWithI18n($widget['widget_id'])->toArrayWithMappedValue();
+            }
+            if (!$renderer) {
+                $renderer = $this->serviceContainer
+                ->setParameter('widget_renderer.widget', $widget)
+                ->getService('widget_renderer');
+            }
 
 			$html = $renderer->getHtml();
 

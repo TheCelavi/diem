@@ -4,7 +4,7 @@ DmPage:
   actAs:
     NestedSet:
     I18n:
-      fields:               [slug, name, title, h1, description, keywords, auto_mod, is_active, is_secure, is_indexable]
+      fields:               [slug, name, title, h1, description, keywords, auto_mod, is_active, is_secure, is_indexable, is_static]
       length:               7
   columns:
     module:                 { type: string(127), notnull: true }
@@ -21,6 +21,7 @@ DmPage:
     is_secure:              { type: boolean, notnull: true, default: false } # requires authentication
     credentials:            { type: string(255), notnull: false }
     is_indexable:           { type: boolean, notnull: true, default: true }
+    is_static:              { type: boolean, notnull: true, default: false } # this page can be cached? 
   indexes:
     recordModuleAction:
       fields:               [ module, action, record_id ]

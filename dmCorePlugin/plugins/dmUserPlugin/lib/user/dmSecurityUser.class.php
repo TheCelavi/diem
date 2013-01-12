@@ -2,6 +2,8 @@
 
 class dmSecurityUser extends sfBasicSecurityUser
 {
+  const SUPER_ADMIN_NAMESPACE = 'symfony/user/sfUser/superAdmin';
+    
   protected
   $user = null,
   $isSuperAdmin = false;
@@ -15,7 +17,48 @@ class dmSecurityUser extends sfBasicSecurityUser
    */
   public function initialize(sfEventDispatcher $dispatcher, sfStorage $storage, $options = array())
   {
+    // initialize parent
     parent::initialize($dispatcher, $storage, $options);
+
+    if (!array_key_exists('timeout', $this->options))
+    {
+      $this->options['timeout'] = 1800;
+    }
+
+    // force the max lifetime for session garbage collector to be greater than timeout
+    if (ini_get('session.gc_maxlifetime') < $this->options['timeout'])
+    {
+      ini_set('session.gc_maxlifetime', $this->options['timeout']);
+    }
+
+    // read data from storage
+    $this->authenticated = $storage->read(self::AUTH_NAMESPACE);
+    $this->credentials   = $storage->read(self::CREDENTIAL_NAMESPACE);
+    $this->lastRequest   = $storage->read(self::LAST_REQUEST_NAMESPACE);
+    $this->isSuperAdmin  = $storage->read(self::SUPER_ADMIN_NAMESPACE);
+    
+    if (null === $this->authenticated)
+    {
+      $this->authenticated = false;
+      $this->credentials   = array();
+    }
+    else
+    {
+      // Automatic logout logged in user if no request within timeout parameter seconds
+      $timeout = $this->options['timeout'];
+      if (false !== $timeout && null !== $this->lastRequest && time() - $this->lastRequest >= $timeout)
+      {
+        if ($this->options['logging'])
+        {
+          $this->dispatcher->notify(new sfEvent($this, 'application.log', array('Automatic user logout due to timeout')));
+        }
+
+        $this->setTimedOut();
+        $this->setAuthenticated(false);
+      }
+    }
+
+    $this->lastRequest = time();
 
     if (!$this->isAuthenticated())
     {
@@ -463,4 +506,12 @@ class dmSecurityUser extends sfBasicSecurityUser
   {
     return $this->getUser()->addPermissionByName($name, $con);
   }
+  
+
+  public function shutdown()
+  {
+    $this->storage->write(self::SUPER_ADMIN_NAMESPACE,  $this->isSuperAdmin);    
+    parent::shutdown();
+  }
+  
 }

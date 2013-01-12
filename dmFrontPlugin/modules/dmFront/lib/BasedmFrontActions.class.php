@@ -2,17 +2,37 @@
 
 class BasedmFrontActions extends dmFrontBaseActions
 {
-
+    
 	public function executePage(dmWebRequest $request)
 	{
-		$this->page = $this->getPageFromRequest($request);
+        $this->page = $this->getPageFromRequest($request);
+        if (isset($_SESSION['symfony/page_cache/template'])) {
+            $this->cacheFile = $_SESSION['symfony/page_cache/template'];
+            unset($_SESSION['symfony/page_cache/template']);
+            return $this->executeCachedPage($request);
+        }
 
 		$this->secure();
 		 
 		return $this->renderPage();
 	}
 
-	protected function getPageFromRequest(dmWebRequest $request)
+    public function executeCachedPage(dmWebRequest $request)
+    {
+        // share current page
+		$this->context->setPage($this->page);        
+        
+		$this->setTemplate('cache');
+		$this->setLayout(sfConfig::get('sf_root_dir').'/apps/front/modules/dmFront/templates/layout');
+
+		$this->helper = $this->getService('page_helper');	
+        
+        
+		return sfView::SUCCESS;
+    }
+
+
+    protected function getPageFromRequest(dmWebRequest $request)
 	{
 		if($dmPage = $request->getParameter('dm_page'))
 		{
@@ -125,6 +145,8 @@ class BasedmFrontActions extends dmFrontBaseActions
 
 		$this->launchDirectActions();
 
+        $this->getService('page_cache')->connect(); // Listen output for caching...
+        
 		return sfView::SUCCESS;
 	}
 

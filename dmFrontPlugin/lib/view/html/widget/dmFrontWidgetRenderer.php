@@ -59,6 +59,12 @@ class dmFrontWidgetRenderer
     return $this->javascripts;
   }
   
+  public function isWidgetCacheable()
+  {
+      return (bool)!$this->getWidgetView()->isStatic();
+  }
+
+
   protected function doRender()
   {
     if ($this->isRendered)
@@ -68,7 +74,7 @@ class dmFrontWidgetRenderer
 
     $widgetView = $this->getWidgetView();
     
-    $this->html        = $widgetView->render();
+    $this->html        = $widgetView->render();    
     $this->javascripts = $widgetView->getJavascripts();
 
     // Convert stylesheets array to sfWebResponse compatible
